@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>job_hunt — a job application assistant that runs on your own computer</title>
+<meta name="description" content="A free app that runs on your own computer. It reads a job advertisement and drafts a CV, cover letter and application answers based only on a profile you write yourself." />
+<style>
+  /* The same palette, type and radii as the app itself — see client/style.css.
+     Kept in one file with no build step and nothing fetched from anywhere else,
+     because this page has to work when it is the first thing somebody has seen of
+     the project, on a train, on a phone. */
+
+  /* Self-hosted, for the same reason the app self-hosts them: this page argues
+     that the app sends your data nowhere, and loading a stylesheet from Google on
+     the way to saying so would be a poor start. See fonts/README.md. */
+  @font-face { font-family: 'Inter'; font-style: normal; font-weight: 100 900; font-display: swap;
+    src: url('./fonts/inter-latin-ext.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'Inter'; font-style: normal; font-weight: 100 900; font-display: swap;
+    src: url('./fonts/inter-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'Outfit'; font-style: normal; font-weight: 100 900; font-display: swap;
+    src: url('./fonts/outfit-latin-ext.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'Outfit'; font-style: normal; font-weight: 100 900; font-display: swap;
+    src: url('./fonts/outfit-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+  :root {
+    --bg: #f8fafc;
+    --panel: #ffffff;
+    --panel-2: #f1f5f9;
+    --ink: #0f172a;
+    --ink-soft: #334155;
+    --muted: #64748b;
+    --line: #e2e8f0;
+    --line-strong: #cbd5e1;
+    --grid-color: rgba(15, 23, 42, 0.04);
+    --accent: #2563eb;
+    --accent-soft: #dbeafe;
+    --on-accent: #ffffff;
+    --link: #2563eb;
+    --ok: #059669;
+    --ok-bg: #ecfdf5;
+    --ok-line: #a7f3d0;
+    --warn: #d97706;
+    --warn-bg: #fffbeb;
+    --warn-line: #fde68a;
+    --error: #dc2626;
+    --error-bg: #fef2f2;
+    --error-line: #fecaca;
+    --font: 'Inter', system-ui, sans-serif;
+    --display: 'Outfit', 'Inter', system-ui, sans-serif;
+    --mono: ui-monospace, 'Cascadia Mono', Consolas, 'SF Mono', monospace;
+    --r-sm: 8px;
+    --r-md: 12px;
+    --r-lg: 16px;
+    --measure: 36rem;
+  }
+  /* Only the tokens change in dark; nothing below is defined for one theme only. */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0b0f19;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --ink: #f8fafc;
+      --ink-soft: #cbd5e1;
+      --muted: #94a3b8;
+      --line: #1e293b;
+      --line-strong: #334155;
+      --grid-color: rgba(248, 250, 252, 0.03);
+      --accent: #3b82f6;
+      --accent-soft: #1e3a8a;
+      --link: #60a5fa;
+      --ok: #34d399;
+      --ok-bg: #052e21;
+      --ok-line: #065f46;
+      --warn: #fbbf24;
+      --warn-bg: #2a2415;
+      --warn-line: #78350f;
+      --error: #f87171;
+      --error-bg: #2a1a1a;
+      --error-line: #7f1d1d;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.65 var(--font);
+    /* The same faint grid the app draws behind its board. */
+    background-image: linear-gradient(var(--grid-color) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+  main { max-width: 48rem; margin: 0 auto; padding: 3.5rem 1.25rem 5rem; }
+
+  h1 {
+    font-family: var(--display); font-weight: 800; font-size: clamp(2.1rem, 6vw, 2.9rem);
+    letter-spacing: -0.03em; line-height: 1.1; margin: 0 0 .9rem;
+  }
+  h2 {
+    font-family: var(--display); font-weight: 700; font-size: clamp(1.3rem, 3.5vw, 1.6rem);
+    letter-spacing: -0.02em; margin: 3.5rem 0 .6rem;
+  }
+  h3 { font-family: var(--display); font-weight: 600; font-size: 1.05rem; margin: 2rem 0 .4rem; }
+  p, li { max-width: var(--measure); }
+  p { margin: 0 0 1rem; }
+  a { color: var(--link); text-underline-offset: 2px; }
+  strong { font-weight: 650; }
+  code, kbd { font-family: var(--mono); font-size: 0.875em; }
+  pre {
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-md);
+    padding: .9rem 1.1rem; overflow-x: auto; font-size: .85rem; line-height: 1.6;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+  }
+  pre code { font-size: inherit; }
+
+  .lede { font-size: clamp(1.05rem, 2.5vw, 1.2rem); color: var(--ink-soft); max-width: 38rem; }
+  .sub { color: var(--muted); max-width: 38rem; font-size: .97rem; }
+  .badge {
+    display: inline-block; padding: .2rem .7rem; border-radius: 999px;
+    background: var(--ok-bg); color: var(--ok); font-size: .78rem; font-weight: 650;
+    border: 1px solid var(--ok-line); letter-spacing: .01em;
+  }
+
+  .cta { display: flex; flex-wrap: wrap; gap: .75rem; margin: 2rem 0 0; }
+  .button {
+    display: inline-flex; align-items: center; gap: .4rem;
+    padding: .7rem 1.25rem; border-radius: var(--r-sm);
+    background: var(--accent); color: var(--on-accent); text-decoration: none;
+    font-weight: 650; font-size: .95rem;
+    box-shadow: 0 1px 2px rgba(37, 99, 235, .2), 0 4px 12px rgba(37, 99, 235, .15);
+  }
+  .button:hover { filter: brightness(1.05); }
+  .button.ghost {
+    background: var(--panel); color: var(--ink);
+    border: 1px solid var(--line-strong); box-shadow: none;
+  }
+  .button.ghost:hover { background: var(--panel-2); }
+
+  figure { margin: 1.75rem 0 2.25rem; }
+  figure img {
+    display: block; width: 100%; height: auto;
+    border: 1px solid var(--line); border-radius: var(--r-lg);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, .04), 0 16px 40px rgba(15, 23, 42, .08);
+  }
+  figcaption { color: var(--muted); font-size: .875rem; margin-top: .7rem; max-width: var(--measure); }
+
+  /* The flag examples, matching the app's own notices. */
+  .flag {
+    border-radius: var(--r-sm); padding: .8rem 1rem; margin: 0 0 .6rem;
+    font-size: .92rem; max-width: var(--measure); border: 1px solid transparent;
+  }
+  .flag.red { background: var(--error-bg); border-color: var(--error-line); border-left: 3px solid var(--error); }
+  .flag.amber { background: var(--warn-bg); border-color: var(--warn-line); border-left: 3px solid var(--warn); }
+  .flag.green { background: var(--ok-bg); border-color: var(--ok-line); border-left: 3px solid var(--ok); }
+
+  .steps { counter-reset: step; list-style: none; padding: 0; }
+  .steps > li { counter-increment: step; position: relative; padding-left: 2.6rem; margin-bottom: 1.6rem; }
+  .steps > li::before {
+    content: counter(step); position: absolute; left: 0; top: .1rem;
+    width: 1.85rem; height: 1.85rem; border-radius: 50%;
+    background: var(--accent); color: var(--on-accent);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--display); font-size: .85rem; font-weight: 700;
+  }
+  .steps h3 { margin-top: 0; }
+
+  details {
+    border: 1px solid var(--line); border-radius: var(--r-md); background: var(--panel);
+    padding: .9rem 1.1rem; margin: 0 0 .6rem; max-width: var(--measure);
+  }
+  summary { cursor: pointer; font-weight: 650; font-size: .95rem; }
+  summary:hover { color: var(--accent); }
+  details p { margin: .7rem 0 0; }
+  details p:last-child { margin-bottom: 0; }
+
+  footer {
+    border-top: 1px solid var(--line); margin-top: 4.5rem; padding-top: 1.75rem;
+    color: var(--muted); font-size: .9rem;
+  }
+  .note {
+    border-left: 3px solid var(--line-strong); padding-left: 1.1rem;
+    color: var(--muted); max-width: var(--measure);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+</style>
+
+</head>
+<body>
+<main>
+
+  <p><span class="badge">Free to run on Gemini's free tier</span></p>
+  <h1>job_hunt</h1>
+
+  <p class="lede">
+    A job application assistant that runs on your own computer. You paste in a job
+    advertisement; it reads the requirements, estimates how well you match, and
+    drafts a CV, a cover letter and answers to any questions the application asks.
+    You edit the drafts, export a PDF, and a board keeps track of where each
+    application got to.
+  </p>
+
+  <p class="sub">
+    Your profile, your drafts and your API key stay on your machine. The only
+    thing that leaves it is the text sent to the language model, when you press a
+    button that does that.
+  </p>
+
+  <div class="cta">
+    <a class="button" href="#setup">How to install it</a>
+    <a class="button ghost" href="https://github.com/kbandara/jobhunt">The code on GitHub</a>
+  </div>
+
+  <h2>How it works</h2>
+
+  <p>
+    You write a <strong>master profile</strong>: one file listing your education,
+    jobs, projects, publications and skills. Everything the app writes comes from
+    that file, and nothing else.
+  </p>
+
+  <p>
+    When it drafts a CV, each bullet point records which parts of your profile it
+    came from. A checker then reads the draft and flags anything that doesn't add
+    up — a bullet with no source, a number that appears in none of the records it
+    cites, or a claim about a qualification your profile says is still in
+    progress.
+  </p>
+
+  <p>
+    The checker is ordinary code rather than another language model, and it doesn't
+    change your document. It shows you what it found and you decide what to do
+    about it.
+  </p>
+
+  <p>What that looks like in practice:</p>
+
+  <div class="flag red">
+    <strong>R2 · experience bullet 2</strong> — "34%" appears in this bullet but in
+    none of the records it cites (<code>role-analyst</code>). If the number is
+    real, add it to that record; if it isn't, remove it.
+  </div>
+
+  <div class="flag red">
+    <strong>R4 · summary</strong> — "completed" says the PhD has been awarded, but
+    your settings record <code>awarded: false</code>. Allowed wordings: "PhD
+    candidate" or "PhD, expected submission March 2027".
+  </div>
+
+  <div class="flag amber">
+    <strong>R9 · document</strong> — the advertisement marks "stakeholder
+    reporting" as essential and the document doesn't mention it. It may be covered
+    in different words, so this is only a note.
+  </div>
+
+  <p class="note">
+    Publications are handled separately. They're read from your profile and
+    formatted in APA by the app itself, so a year or a journal name can't get
+    altered along the way.
+  </p>
+
+  <h2>A recruiter's read of the document you're actually sending</h2>
+
+  <p>
+    The checks above tell you whether the draft is <em>honest</em>. This tells you
+    whether it's any <em>good</em>. A model plays the person screening applications
+    for the role, reads <strong>the draft you're about to send</strong> — not your
+    profile — against the advertisement, and says what it would do with it.
+  </p>
+
+  <p>You get what a screener notices first, and two kinds of suggested change:</p>
+
+  <div class="flag amber">
+    <strong>Would make them hesitate</strong> — nothing in the first half addresses
+    clinical data. <em>Move the monitoring-programme bullet into the summary, where
+    it is the first thing read.</em>
+  </div>
+
+  <div class="flag green">
+    <strong>In your profile, missing from this draft</strong> — riverkit:
+    reproducible flow-ecology metrics in R. <em>A software paper, which answers the
+    tooling requirement nothing else here touches.</em>
+  </div>
+
+  <p>
+    Every suggestion is checked against your own records before you see it. A term
+    the advertisement never used, or one pointing at a record that doesn't exist,
+    is thrown away — <strong>and shown to you as thrown away, with the reason</strong>.
+    A review that quietly invented a qualification for you to "work in" would undo
+    the entire point of the app.
+  </p>
+
+  <h2>Two more things worth knowing about</h2>
+
+  <h3>It can name your visa route, per country</h3>
+
+  <p>
+    An employer advertising in the US will read "open to relocation" as "needs
+    sponsorship" and often stop there. But an Australian applying for that same job
+    can use the E-3 visa, which has no lottery and only needs a one-page form from
+    the employer. Saying so plainly can be the difference between getting read and
+    getting filtered out.
+  </p>
+
+  <p>
+    So the last line of your CV header comes from a table you fill in, with a
+    different line per country. Countries you haven't listed use your general
+    relocation phrase.
+  </p>
+
+  <p class="note">
+    <strong>Read what you write here before you send anything.</strong> Whatever
+    you type is printed on your CV word for word, as a statement you're making
+    about yourself, and the app doesn't check any of it. It doesn't know which
+    schemes exist, what their age limits are, or whether they're open this year.
+    Delete anything you're not actually eligible for. The example routes belong to
+    a fictional person and are there to show the format.
+  </p>
+
+  <h3>It shows you the advertisement's own words</h3>
+
+  <p>
+    Most applications are searched for keywords before a person reads them. A CV
+    describing exactly the right work in different words — "measurement
+    instruments" where the ad says "evaluations" — can score nothing on the term
+    that counted.
+  </p>
+
+  <p>
+    So the app pulls out the terms from the advertisement, puts the ones marked
+    essential first, and ticks off the ones your draft already uses. Where a bullet
+    describes work you genuinely did, using the advertisement's word for it costs
+    nothing. Where you haven't done the thing, leave the term unticked — that's
+    what the list is for.
+  </p>
+
+  <h3>The chat can't rewrite your draft unless you let it</h3>
+
+  <p>
+    You can ask questions about a draft in a panel beside it — why it says
+    something, what a line claims, whether anything in it isn't backed by one of
+    your records. It starts in <strong>Ask</strong>, which answers and nothing
+    else. If the model returns a rewrite anyway, the app throws it away and tells
+    you it did.
+  </p>
+
+  <p>
+    <strong>Edit</strong> is the other button, and it's one click away. That one
+    rewrites the document and saves it as a new version, with the one before it
+    still there. The two are separate because "why does the summary lead with the
+    PhD?" is a question, and a chat that answered it by replacing an hour of your
+    editing is a chat you'd stop using.
+  </p>
+
+  <p>
+    Models rewrite anyway, and they describe it as done — "I have updated the
+    skills section to…". So the rewrite is <em>offered</em> rather than binned,
+    with a button that applies it, and the reply above it is labelled as
+    describing something that hasn't happened.
+  </p>
+
+  <p>
+    Highlight a passage before you ask and you can quote it, so the question is
+    about that paragraph rather than the whole CV.
+  </p>
+
+  <h3>Your profile opens next to the draft</h3>
+
+  <p>
+    The question you actually have while reading a draft is "what have I got that
+    this leaves out?" So your records open in a panel on the left, opposite the
+    chat, and both can be open at once — your profile on one side, the model on
+    the other, the CV in between.
+  </p>
+
+  <p>
+    Each record is marked according to whether the draft already mentions it, and
+    a <strong>Not used</strong> filter shows only the ones it doesn't. Any of them
+    can be dropped into the draft in the record's own words. The mark is matched
+    on titles and organisations, so it's a prompt to look rather than proof.
+  </p>
+
+  <h3>Nothing you delete is really deleted</h3>
+
+  <p>
+    Delete moves an application to a bin. Restore puts it back where it was, with
+    every draft and every earlier version exactly as they were. Permanent deletion
+    exists, but it lives in the bin as a separate step. Your edits are saved as new
+    versions too, never over the top — the app is built on the assumption that
+    losing your work is the worst thing it could do.
+  </p>
+
+  <p>
+    Every version can be read as a diff — the usual green pluses and red minuses,
+    with the unchanged parts collapsed so a one-sentence edit reads as one
+    sentence. That works either way round: what this version changed, or what
+    would change if you restored it.
+  </p>
+
+  <h2>What it looks like</h2>
+
+  <figure>
+    <img src="assets/welcome.png" alt="The first screen: four numbered setup steps, with the first ticked off and the second — getting an API key — open." width="1280" />
+    <figcaption>
+      The first screen. Four steps, each showing the actual state of your computer
+      rather than a checklist you tick off yourself. The first one here has already
+      passed, so it is closed.
+    </figcaption>
+  </figure>
+
+  <figure>
+    <img src="assets/profile.png" alt="The profile editor: records grouped by kind — education, projects, findings, roles, publications, skills, awards, service." width="1280" />
+    <figcaption>
+      Your profile, edited in the app. It's a plain markdown file on your disk, so
+      you can also edit it in any text editor — the app notices either way.
+    </figcaption>
+  </figure>
+
+  <figure>
+    <img src="assets/publications.png" alt="A job screen: the parsed advertisement on the left, the draft CV on the right, with the publications picker open above it." width="1280" />
+    <figcaption>
+      A job, part-way through. The advertisement on the left as the app read it, the
+      draft on the right, and publications formatted in APA from your own records —
+      ticking one never touches the draft.
+    </figcaption>
+  </figure>
+
+  <figure>
+    <img src="assets/recruiter.png" alt="The recruiter's read panel: a verdict, what a screener would hesitate over, records missing from the draft, and suggestions thrown away with their reasons." width="1280" />
+    <figcaption>
+      A recruiter's read of the draft. Note the last section: two suggestions were
+      thrown away before they reached the screen, and it says which and why.
+    </figcaption>
+  </figure>
+
+  <h2>You don't have to type your profile out</h2>
+
+  <p>
+    Upload your CV as a PDF — a LinkedIn <em>Save to PDF</em> export works — or
+    paste the text in. It comes back as records, each shown next to the part of the
+    document it came from, and nothing is saved until you tick it.
+  </p>
+
+  <p>
+    That review matters: these records are what every future CV draws on, so a
+    mistake here follows you around. There's also a <em>Load a worked example</em>
+    button if you'd rather click through the whole app first.
+  </p>
+
+  <h3>And a button that tightens the wording</h3>
+
+  <p>
+    Records written in a hurry read like notes. <em>Tighten the wording</em> reads
+    them back and suggests clearer versions — outcome first, less filler.
+  </p>
+
+  <p>
+    Every suggestion is checked before you see it. A rewrite is rejected if it adds
+    a figure your record doesn't contain, drops one that it does, or grows by more
+    than half:
+  </p>
+
+  <div class="flag red">
+    <strong>Not offered</strong> — the rewrite contains "34%", which the record
+    doesn't. If that figure is real, add it to the record first.
+  </div>
+
+  <p>
+    Rejected suggestions are still shown, with the reason. They tend to be useful:
+    usually a sign the underlying record is missing something you could add
+    yourself. Where a record is genuinely thin, you get questions rather than
+    padding — "how many sites?", "what did the error rate drop to?"
+  </p>
+
+  <h2 id="setup">Installing it</h2>
+
+  <p>
+    There's nothing to sign up for and no account to make. It's a small Node
+    program that runs on your computer and serves a page to your own browser.
+    About ten minutes, once.
+  </p>
+
+  <ol class="steps">
+    <li>
+      <h3>Install Node 22</h3>
+      <p>Check what you have with <code>node --version</code>. If it's older than
+      v22, get the LTS version from <a href="https://nodejs.org">nodejs.org</a>.</p>
+    </li>
+    <li>
+      <h3>Download the code</h3>
+<pre><code>git clone https://github.com/kbandara/jobhunt.git
+cd jobhunt
+npm install</code></pre>
+      <p>Five small packages, and no build step.</p>
+    </li>
+    <li>
+      <h3>Start it</h3>
+<pre><code>npm start</code></pre>
+      <p>Then open <code>http://127.0.0.1:4477</code> in your browser. Leave that
+      terminal window open — closing it stops the app.</p>
+    </li>
+    <li>
+      <h3>Follow the first screen</h3>
+      <p>It walks you through getting an API key (with a link to the page that
+      issues a free one), your contact details, and your profile.</p>
+      <p>If anything goes wrong, <code>npm run doctor</code> checks everything in
+      one go and tells you how to fix whatever it finds.</p>
+    </li>
+  </ol>
+
+  <h2>Common questions</h2>
+
+  <details>
+    <summary>Does anything I write get sent anywhere?</summary>
+    <p>
+      Your profile, drafts, job list and API key are files on your own disk and
+      are never uploaded. The app only accepts connections from your own computer,
+      so nothing else on your network can reach it.
+    </p>
+    <p>
+      What does get sent is what you'd expect: when you press <em>Read the ad</em>,
+      <em>Score</em> or <em>Generate</em>, the advertisement and the relevant
+      records go to whichever model provider you set up. Nothing is sent without a
+      button press.
+    </p>
+  </details>
+
+  <details>
+    <summary>What does it cost?</summary>
+    <p>
+      Nothing on Google Gemini's free tier, which is the default and what the setup
+      screen suggests. On Anthropic it's roughly 20c per application. Either way
+      the running total is in the app header, and every call is recorded with its
+      token counts in <code>data/usage/ledger.jsonl</code>.
+    </p>
+  </details>
+
+  <details>
+    <summary>Can I use it on my phone, or without installing anything?</summary>
+    <p>
+      No — it needs to run on a computer. There's no hosted version, which is
+      deliberate: a hosted version would mean somebody else's server holding your
+      phone number, your citizenship and every job you've had.
+    </p>
+  </details>
+
+  <details>
+    <summary>I'm not technical. Is this beyond me?</summary>
+    <p>
+      The install is three commands you copy and paste, once. Everything after that
+      happens in your browser.
+    </p>
+    <p>
+      If a step doesn't work, <code>npm run doctor</code> checks Node, the
+      packages, your API key, whether the model names are still valid and whether
+      your profile is readable, then prints a list with a suggested fix under
+      anything that's wrong.
+    </p>
+  </details>
+
+  <details>
+    <summary>Can it read my CV, or do I type everything in?</summary>
+    <p>
+      Upload it. A PDF — including a LinkedIn <em>Save to PDF</em> export — or a
+      text file, or pasted text. The PDF is read on your own computer; only the
+      extracted text goes to the model, and only when you press the button.
+    </p>
+    <p>
+      Some PDFs store their fonts in a way that can't be read back. When that
+      happens the app tells you and points you at the paste box instead.
+    </p>
+  </details>
+
+  <details>
+    <summary>Will it write my whole application for me?</summary>
+    <p>
+      It writes a first draft based on what you've actually done, and tells you
+      everywhere it's unsure. It's a starting point — the app assumes you'll edit
+      it, so your version is saved alongside the model's and every version is
+      recoverable.
+    </p>
+  </details>
+
+  <details>
+    <summary>What if my field is nothing like the examples?</summary>
+    <p>
+      The categories are yours to set. You choose the labels for what each record
+      is evidence of, which sections a CV runs in, and you can add a new CV profile
+      by describing the kind of role in a sentence. The seven included ones —
+      research, teaching, data science, industry, industry research, public sector and general —
+      are just a starting point.
+    </p>
+  </details>
+
+  <footer>
+    <p>
+      Runs on your own computer. No account, no tracking, and nothing about you
+      leaves your machine. Node 22, five packages, no build step.
+    </p>
+  </footer>
+
+</main>
+</body>
+</html>

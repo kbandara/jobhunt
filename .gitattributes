@@ -1,0 +1,12 @@
+# Normalise line endings in the repository to LF, whatever platform commits.
+# Without this, editing a file on Windows can rewrite every line ending and show
+# the whole file as changed in `git status` — which makes a real one-line edit
+# impossible to spot, and makes `git pull` look like a conflict when it is not.
+* text=auto
+
+# ...but `text=auto` above guesses, and a guess about a binary is destructive:
+# a font that gets CRLF-normalised on checkout is a corrupt font, and the
+# failure shows up as the page silently falling back to a system face rather
+# than as an error. Name them binary so the guess never happens.
+*.woff2 binary
+*.woff binary

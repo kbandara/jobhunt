@@ -1,0 +1,52 @@
+{
+  "$id": "https://job-hunt.local/schemas/import-profile.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["records", "notes"],
+  "properties": {
+    "records": {
+      "type": "array",
+      "description": "One entry per thing found in the document. Nothing invented: if the document does not say it, it is not here.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "title", "org", "start", "end", "tags", "body", "quote"],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": ["education", "project", "finding", "role", "publication", "skill", "award", "service"],
+            "description": "Which section of the master profile this belongs in"
+          },
+          "title": { "type": "string", "description": "The job title, degree, project name or paper title, exactly as the document words it" },
+          "org": { "type": "string", "description": "Employer, university, publisher or venue. Empty string when the document does not name one." },
+          "start": { "type": "string", "description": "YYYY-MM, or YYYY when only a year is given, or \"\" when the document gives no date" },
+          "end": { "type": "string", "description": "Same format. \"\" means still current — which is what \"Present\" means." },
+          "location": { "type": "string", "description": "City and country, if the document gives one" },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Lower-case keywords drawn from the words in this entry: tools, methods, domains. Six at most."
+          },
+          "body": {
+            "type": "string",
+            "description": "What the work was and what came of it, in prose, using ONLY what the document says. Keep every number the document gives, exactly as it gives it. Two to five sentences."
+          },
+          "quote": {
+            "type": "string",
+            "description": "A short verbatim fragment of the document this entry came from, so a human can check it against the original in one glance"
+          },
+          "missing": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "What a CV would want that this document does not say — 'no dates given', 'no outcome or number'. One short phrase each."
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Anything about the document as a whole worth telling the person: sections that could not be read, an ambiguity, a date that appears twice differently."
+    }
+  }
+}

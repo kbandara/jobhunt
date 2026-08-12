@@ -1,0 +1,65 @@
+{
+  "$id": "parse-jd",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["role_title", "company", "location", "work_arrangement", "requirements", "skills", "responsibilities", "selection_criteria", "technical_register", "domain_vocabulary", "profile_guess", "profile_guess_reason"],
+  "properties": {
+    "role_title": { "type": "string" },
+    "company": { "type": "string" },
+    "location": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["country"],
+      "properties": {
+        "country": { "type": "string", "description": "ISO 3166-1 alpha-2, e.g. AU, GB, US; XX if not stated" },
+        "city": { "type": ["string", "null"] }
+      }
+    },
+    "work_arrangement": { "type": "string", "enum": ["onsite", "hybrid", "remote", "remote-anywhere", "unspecified"] },
+    "timezone": { "type": ["string", "null"], "description": "IANA timezone if the ad names one, else null" },
+    "seniority": { "type": ["string", "null"] },
+    "closing_date": { "type": ["string", "null"], "description": "ISO date if stated, else null" },
+    "requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["text", "kind", "must_have"],
+        "properties": {
+          "text": { "type": "string" },
+          "kind": { "type": "string", "enum": ["skill", "qualification", "experience", "citizenship", "clearance", "other"] },
+          "must_have": { "type": "boolean" }
+        }
+      }
+    },
+    "skills": { "type": "array", "items": { "type": "string" } },
+    "responsibilities": { "type": "array", "items": { "type": "string" } },
+    "selection_criteria": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["question"],
+        "properties": {
+          "question": { "type": "string" },
+          "word_limit": { "type": ["integer", "null"] }
+        }
+      }
+    },
+    "technical_register": {
+      "type": "string",
+      "enum": ["specialist", "mixed", "general"],
+      "description": "How expert the person reading this application will be, judged from how the advertisement itself is written"
+    },
+    "domain_vocabulary": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "The technical terms the advertisement itself uses, e.g. EEG, Bayesian inference, PyTorch. Empty array when it uses none"
+    },
+    "profile_guess": {
+      "type": "string",
+      "description": "One of the profile ids listed in the system prompt. A plain string, not an enum: profiles are files on disk and new ones get added"
+    },
+    "profile_guess_reason": { "type": "string" }
+  }
+}

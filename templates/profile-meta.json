@@ -1,0 +1,32 @@
+{
+  "_comment": "Your details. The app copies these onto documents exactly as written and never asks a model for them. Edit them in the app under Settings, or here by hand. This file lives in data/ and is never committed to git.",
+  "name": "",
+  "preferred": "",
+  "email": "",
+  "phone": "",
+  "city": "",
+  "_linksComment": "Shown as an icon and the address, as a link. Use a label that still works if somebody types it off a printed page, rather than a shorter one that leads nowhere. Recognised kinds: github, linkedin, scholar, orcid, website.",
+  "links": [],
+  "citizenship": "",
+  "_workRightsComment": "The last line of every CV header, and the part to fill in most carefully. Every phrase here is printed on your CV word for word, as a statement you are making about your right to work somewhere, and the app checks none of it. Visa rules, age limits and reciprocal schemes change. Delete anything you are not actually eligible for and willing to use. A country with no entry of its own uses `relocation`; delete `byCountry` entirely and that phrase is used everywhere, which is the safest option. Any country can instead set `line` to the exact wording you want printed.",
+  "workRights": {
+    "home": "",
+    "citizenship": "",
+    "statement": "",
+    "relocation": "open to relocation",
+    "remote": "",
+    "homeCountry": "",
+    "byCountry": {}
+  },
+  "_qualificationsComment": "What the app treats as true about your qualifications. Listing one here with awarded: false means no generated document can claim you hold it — the check reads these true/false values, not the wording of your profile. Name each one whatever you like ('phd', 'masters'). A 'phd' entry also prevents the title 'Dr' and the letters after your name.",
+  "qualifications": {},
+  "_evidenceTagsComment": "Your own labels for what a record is useful for. Each record picks from this list, and each CV profile says which labels it can draw on.",
+  "evidenceTags": [
+    "research",
+    "industry",
+    "teaching",
+    "public-sector"
+  ],
+  "_timezoneComment": "Set this to true only if you want your documents to mention that your working hours overlap with the employer's timezone.",
+  "timezoneOverlapClaims": false
+}

@@ -1,0 +1,29 @@
+{
+  "synthetic": true,
+  "note": "SYNTHETIC — hand-written to match the provider wire shape, never recorded from a live call. Replace with `npm run record-fixtures`.",
+  "provider": "gemini",
+  "task": "parse-jd",
+  "status": 200,
+  "body": {
+    "candidates": [
+      {
+        "content": {
+          "role": "model",
+          "parts": [
+            {
+              "text": "{\n  \"role_title\": \"Research Engineer, Model Evaluations\",\n  \"company\": \"Example Labs\",\n  \"location\": {\n    \"country\": \"GB\",\n    \"city\": \"London\"\n  },\n  \"work_arrangement\": \"hybrid\",\n  \"timezone\": null,\n  \"seniority\": \"mid\",\n  \"closing_date\": \"2026-09-15\",\n  \"requirements\": [\n    {\n      \"text\": \"Experience designing and running behavioural evaluations\",\n      \"kind\": \"experience\",\n      \"must_have\": true\n    },\n    {\n      \"text\": \"Strong Python\",\n      \"kind\": \"skill\",\n      \"must_have\": true\n    },\n    {\n      \"text\": \"Right to work in the UK\",\n      \"kind\": \"citizenship\",\n      \"must_have\": false\n    }\n  ],\n  \"skills\": [\n    \"Python\",\n    \"statistics\",\n    \"experimental design\"\n  ],\n  \"responsibilities\": [\n    \"Design evaluations that tell us something a benchmark score does not\",\n    \"Report findings to the research team\"\n  ],\n  \"selection_criteria\": [],\n  \"technical_register\": \"specialist\",\n  \"domain_vocabulary\": [\n    \"behavioural evaluations\",\n    \"psychometrics\",\n    \"item response theory\",\n    \"Python\"\n  ],\n  \"profile_guess\": \"ai-eval\",\n  \"profile_guess_reason\": \"The ad is about model evaluations and behavioural testing.\"\n}"
+            }
+          ]
+        },
+        "finishReason": "STOP",
+        "index": 0
+      }
+    ],
+    "usageMetadata": {
+      "promptTokenCount": 1187,
+      "candidatesTokenCount": 298,
+      "totalTokenCount": 1485
+    },
+    "modelVersion": "gemini-2.5-flash"
+  }
+}

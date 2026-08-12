@@ -1,0 +1,33 @@
+{
+  "$id": "generate-cover-letter",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["paragraphs", "gaps", "changes_made"],
+  "properties": {
+    "paragraphs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["text", "evidence_ids"],
+        "properties": {
+          "text": { "type": "string" },
+          "evidence_ids": { "type": "array", "items": { "type": "string" }, "description": "Empty only for pure framing paragraphs making no factual claims about the candidate" }
+        }
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["evidence_id", "wanted"],
+        "properties": {
+          "evidence_id": { "type": "string" },
+          "wanted": { "type": "string" }
+        }
+      }
+    },
+    "changes_made": { "type": "array", "items": { "type": "string" } }
+  }
+}

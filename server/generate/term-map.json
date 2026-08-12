@@ -1,0 +1,103 @@
+[
+  {
+    "term": "Dynamic Causal Modelling",
+    "acronym": "DCM",
+    "translation": "generative modelling of dynamical systems",
+    "alt": "inferring how components of a system drive each other"
+  },
+  {
+    "term": "Parametric Empirical Bayes",
+    "acronym": "PEB",
+    "translation": "hierarchical Bayesian modelling across participants"
+  },
+  {
+    "term": "Bayesian model reduction",
+    "acronym": "BMR",
+    "translation": "pruning a fitted model down to the parts the data support",
+    "alt": "comparing simpler versions of a model without refitting it"
+  },
+  {
+    "term": "effective connectivity",
+    "translation": "which parts of a system drive which, and in which direction"
+  },
+  {
+    "term": "SVM temporal generalisation",
+    "translation": "cross-validated classification of time-series"
+  },
+  {
+    "term": "temporal generalisation",
+    "translation": "testing whether a pattern learned at one moment still holds at another"
+  },
+  {
+    "term": "MVPA",
+    "translation": "classifying patterns across many measurements at once"
+  },
+  {
+    "term": "meta-d′",
+    "translation": "measuring how well confidence tracks accuracy"
+  },
+  {
+    "term": "M-ratio",
+    "translation": "how efficiently confidence tracks accuracy"
+  },
+  {
+    "term": "signal detection theory",
+    "acronym": "SDT",
+    "translation": "separating what someone can tell apart from what they are inclined to say"
+  },
+  {
+    "term": "item response theory",
+    "acronym": "IRT",
+    "translation": "modelling how hard and how informative each question is, separately from the overall score"
+  },
+  {
+    "term": "psychophysics",
+    "translation": "measuring perception against precisely controlled stimuli"
+  },
+  {
+    "term": "source reconstruction",
+    "translation": "estimating where in the brain a recorded signal came from"
+  },
+  {
+    "term": "Multiple Sparse Priors",
+    "acronym": "MSP",
+    "translation": "estimating the sources underlying a recorded signal"
+  },
+  {
+    "term": "variational Laplace",
+    "translation": "an approximate Bayesian fitting method"
+  },
+  {
+    "term": "variational inference",
+    "translation": "an approximate Bayesian fitting method"
+  },
+  {
+    "term": "posterior exceedance probability",
+    "translation": "how strongly the comparison favours one model over the others"
+  },
+  {
+    "term": "posterior predictive checking",
+    "translation": "checking that a fitted model can reproduce the data it was fitted to"
+  },
+  {
+    "term": "parameter recovery",
+    "translation": "simulating data with known values and checking the model finds them again"
+  },
+  {
+    "term": "active inference",
+    "translation": "modelling behaviour as acting to reduce uncertainty"
+  },
+  {
+    "term": "free energy principle",
+    "translation": "a theory that treats perception and action as reducing prediction error"
+  },
+  {
+    "term": "event-related potential",
+    "acronym": "ERP",
+    "translation": "an averaged brain response time-locked to an event"
+  },
+  {
+    "term": "bCFS",
+    "translation": "a visual masking paradigm"
+  }
+]

@@ -1,0 +1,116 @@
+{
+  "$id": "draft-profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "description",
+    "register",
+    "evidenceProfiles",
+    "sections",
+    "lengthPages",
+    "publications",
+    "clearance",
+    "techSectionName",
+    "kindPriority",
+    "prompt_markdown"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "kebab-case file name for this CV profile, e.g. science-communication. Lower case letters, digits and single hyphens only. Must not be one of the profile ids listed in the system prompt"
+    },
+    "description": {
+      "type": "string",
+      "description": "One sentence. Shown in the picker, and given to the model that guesses a profile for a new advertisement, so it must say what kind of role this profile is for"
+    },
+    "register": {
+      "type": "string",
+      "enum": ["specialist", "mixed", "general"],
+      "description": "How expert the reader of this application is assumed to be"
+    },
+    "evidenceProfiles": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Which evidence tags this profile may draw records from. Only the tags listed in the system prompt exist. A plain string array, not an enum, and the server rejects anything that is not one of them"
+    },
+    "sections": {
+      "type": "array",
+      "description": "The CV's sections, in the order they appear. Only the section ids listed in the system prompt exist; the server rejects any other id",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id"],
+        "properties": {
+          "id": { "type": "string", "description": "A section id from the catalogue in the system prompt" },
+          "heading": { "type": ["string", "null"], "description": "Wording that overrides the default heading, or null to keep it" },
+          "max": { "type": ["integer", "null"], "description": "Render at most this many entries in this section, or null for no limit" }
+        }
+      }
+    },
+    "lengthPages": {
+      "type": ["integer", "null"],
+      "description": "Page budget for the CV, or null when the profile has no page limit (an academic CV, for instance)"
+    },
+    "publications": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy", "count", "style"],
+      "properties": {
+        "policy": {
+          "type": "string",
+          "enum": ["omit", "brief", "selected", "all"],
+          "description": "omit = leave publications out; brief = a short relevant list; selected = the most relevant few; all = the complete list"
+        },
+        "count": { "type": "integer", "description": "How many to show. Ignored when policy is omit or all; use 0 for omit" },
+        "style": {
+          "type": "string",
+          "enum": ["one-line", "full"],
+          "description": "one-line = a single line each; full = full citation form"
+        }
+      }
+    },
+    "clearance": {
+      "type": "string",
+      "enum": ["first-line", "mention", "omit"],
+      "description": "How the security clearance is treated: lead with it, mention it where the ad raises security, or leave it out"
+    },
+    "techSectionName": {
+      "type": "string",
+      "description": "What the technical section is called on the page, e.g. Skills, Technical Skills, Methods & Tools"
+    },
+    "kindPriority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "project", "finding", "publication", "skill", "education", "award", "service"],
+      "description": "How strongly each kind of evidence record leads in this profile. Higher wins; 0 to 6 is the range the existing profiles use",
+      "properties": {
+        "role": { "type": "integer" },
+        "project": { "type": "integer" },
+        "finding": { "type": "integer" },
+        "publication": { "type": "integer" },
+        "skill": { "type": "integer" },
+        "education": { "type": "integer" },
+        "award": { "type": "integer" },
+        "service": { "type": "integer" }
+      }
+    },
+    "skillGroups": {
+      "type": "array",
+      "description": "Optional. Groups the skills line under labels, e.g. Languages / Analysis / Tooling. Omit the whole array to run the skills together instead",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["label", "tags"],
+        "properties": {
+          "label": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "prompt_markdown": {
+      "type": "string",
+      "description": "The body of this profile's prompt file, in the same voice as the existing ones: a '# Profile: ...' heading, the section order, what leads and why, how publications and the clearance are treated, and what the technical section is called"
+    }
+  }
+}

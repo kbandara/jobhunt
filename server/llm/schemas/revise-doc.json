@@ -1,0 +1,30 @@
+{
+  "$id": "revise-doc",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["reply", "revised"],
+  "properties": {
+    "reply": {
+      "type": "string",
+      "description": "The answer to what they asked, in plain prose. Always present. If the document was not changed, this is where the reason goes."
+    },
+    "revised": {
+      "type": ["boolean", "null"],
+      "description": "true only when `markdown` below is a full rewritten document. false or null when this was a question rather than an instruction."
+    },
+    "markdown": {
+      "type": ["string", "null"],
+      "description": "The COMPLETE revised document in the same markdown shape as the one supplied, or null when nothing was changed. Never a fragment, never a diff — it replaces the file."
+    },
+    "changes_made": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "One line per edit actually made, so they can check the change was the one they asked for."
+    },
+    "declined": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Anything asked for that was not done, and why. An instruction that would require inventing a fact belongs here, not in changes_made."
+    }
+  }
+}

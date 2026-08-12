@@ -1,0 +1,68 @@
+{
+  "$id": "generate-cv",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["summary", "sections", "gaps", "changes_made"],
+  "properties": {
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "evidence_ids"],
+      "properties": {
+        "text": { "type": "string", "description": "Two to four sentences; the career-transition bridge. Appears in every profile." },
+        "evidence_ids": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["heading", "entries"],
+        "properties": {
+          "heading": { "type": "string" },
+          "entries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["bullets"],
+              "properties": {
+                "title": { "type": ["string", "null"] },
+                "org": { "type": ["string", "null"] },
+                "dates": { "type": ["string", "null"], "description": "e.g. 'June 2021 – July 2022'; month dropped when older than four years" },
+                "line": { "type": ["string", "null"], "description": "For one-line entries (publications, awards): the full line, instead of bullets" },
+                "bullets": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["text", "evidence_ids"],
+                    "properties": {
+                      "text": { "type": "string" },
+                      "evidence_ids": { "type": "array", "items": { "type": "string" } }
+                    }
+                  }
+                },
+                "evidence_ids": { "type": "array", "items": { "type": "string" }, "description": "For line entries: the records the line draws on" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["evidence_id", "wanted"],
+        "properties": {
+          "evidence_id": { "type": "string" },
+          "wanted": { "type": "string", "description": "e.g. 'a quantified outcome' — surfaced in the UI, feeds back into master-profile.md" }
+        }
+      }
+    },
+    "changes_made": { "type": "array", "items": { "type": "string" } }
+  }
+}

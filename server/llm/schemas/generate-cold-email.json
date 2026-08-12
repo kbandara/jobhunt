@@ -1,0 +1,38 @@
+{
+  "$id": "generate-cold-email",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["subject", "paragraphs", "gaps", "changes_made"],
+  "properties": {
+    "subject": {
+      "type": "string",
+      "description": "The subject line. Specific and plain — what this is about, not how keen they are. No more than about eight words."
+    },
+    "paragraphs": {
+      "type": "array",
+      "description": "Three or four short paragraphs. The whole email is 120-180 words: a cold email that scrolls does not get read.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["text", "evidence_ids"],
+        "properties": {
+          "text": { "type": "string" },
+          "evidence_ids": { "type": "array", "items": { "type": "string" }, "description": "Empty only for the greeting, the ask and the sign-off, which make no factual claim about them" }
+        }
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["evidence_id", "wanted"],
+        "properties": {
+          "evidence_id": { "type": "string" },
+          "wanted": { "type": "string" }
+        }
+      }
+    },
+    "changes_made": { "type": "array", "items": { "type": "string" } }
+  }
+}

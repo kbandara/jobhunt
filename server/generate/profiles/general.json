@@ -1,0 +1,57 @@
+{
+  "id": "general",
+  "description": "The catch-all: anything interesting that does not fit another profile. Also where a profile guess lands when the model names a profile that does not exist.",
+  "targets": [
+    "one-off roles",
+    "anything interesting",
+    "roles that fit no other profile"
+  ],
+  "evidenceProfiles": [
+    "*"
+  ],
+  "register": "mixed",
+  "sections": [
+    {
+      "id": "summary"
+    },
+    {
+      "id": "experience"
+    },
+    {
+      "id": "skills"
+    },
+    {
+      "id": "research"
+    },
+    {
+      "id": "publications",
+      "max": 3
+    },
+    {
+      "id": "education"
+    },
+    {
+      "id": "additional"
+    }
+  ],
+  "lengthPages": 2,
+  "publications": {
+    "policy": "brief",
+    "count": 3,
+    "style": "one-line"
+  },
+  "clearance": "mention",
+  "techSectionName": "Skills",
+  "summaryAlways": true,
+  "criteriaDoc": false,
+  "kindPriority": {
+    "role": 6,
+    "project": 5,
+    "skill": 4,
+    "education": 3,
+    "finding": 3,
+    "publication": 2,
+    "award": 1,
+    "service": 1
+  }
+}

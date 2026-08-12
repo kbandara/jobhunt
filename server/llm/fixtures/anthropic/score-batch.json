@@ -1,0 +1,25 @@
+{
+  "synthetic": true,
+  "note": "SYNTHETIC — hand-written to match the provider wire shape, never recorded from a live call. Replace with `npm run record-fixtures`.",
+  "provider": "anthropic",
+  "task": "score-batch",
+  "status": 200,
+  "body": {
+    "id": "msg_synthetic_score_batch",
+    "type": "message",
+    "role": "assistant",
+    "model": "claude-haiku-4-5",
+    "content": [
+      {
+        "type": "text",
+        "text": "{\n  \"scores\": [\n    {\n      \"index\": 0,\n      \"score\": 88,\n      \"reason\": \"Model evaluations sit squarely on the eval-platform work.\"\n    },\n    {\n      \"index\": 1,\n      \"score\": 23,\n      \"reason\": \"Data-centre security is unrelated to any evidence record.\"\n    },\n    {\n      \"index\": 2,\n      \"score\": 61,\n      \"reason\": \"Applied statistics role; methods match, domain does not.\"\n    }\n  ]\n}"
+      }
+    ],
+    "stop_reason": "end_turn",
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 860,
+      "output_tokens": 172
+    }
+  }
+}

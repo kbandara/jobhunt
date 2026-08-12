@@ -1,0 +1,71 @@
+{
+  "_comment": "Contact details for the made-up person in example-profile.md. Nothing here is real.",
+  "name": "Rosa Kimani",
+  "preferred": "Rosa",
+  "email": "rosa.kimani@example.org",
+  "phone": "+61 400 000 000",
+  "city": "Riverina, Australia",
+  "links": [
+    {
+      "kind": "github",
+      "label": "github.com/example",
+      "url": "https://github.com/example"
+    },
+    {
+      "kind": "orcid",
+      "label": "orcid.org/0000-0000-0000-0000",
+      "url": "https://orcid.org/0000-0000-0000-0000"
+    }
+  ],
+  "citizenship": "Australian",
+  "workRights": {
+    "home": "Riverina, Australia",
+    "citizenship": "Australian citizen",
+    "statement": "Australian citizen",
+    "relocation": "open to relocation",
+    "remote": "no sponsorship required for remote engagement",
+    "homeCountry": "AU",
+    "byCountry": {
+      "AU": {},
+      "NZ": {
+        "visa": "no visa required (Trans-Tasman Travel Arrangement)"
+      },
+      "US": {
+        "visa": "eligible for the E-3 visa (Australians only — no lottery, and the employer files a one-page LCA rather than an H-1B petition)"
+      },
+      "GB": {
+        "relocation": "relocating to the UK",
+        "visa": "eligible for the UK Youth Mobility Scheme (unsponsored, up to 3 years, no cost to the employer)"
+      },
+      "CA": {
+        "relocation": "relocating to Canada",
+        "visa": "eligible for International Experience Canada (unsponsored working holiday)"
+      },
+      "IE": {
+        "relocation": "relocating to Ireland",
+        "visa": "eligible for the Irish Working Holiday Authorisation (unsponsored, 12 months)"
+      }
+    }
+  },
+  "qualifications": {
+    "phd": {
+      "label": "PhD",
+      "status": "in_progress",
+      "expectedSubmission": "2027-03",
+      "submitted": false,
+      "awarded": false,
+      "allowedForms": [
+        "PhD candidate",
+        "PhD, expected submission March 2027"
+      ]
+    }
+  },
+  "evidenceTags": [
+    "research",
+    "industry",
+    "teaching",
+    "public-sector"
+  ],
+  "timezoneOverlapClaims": false,
+  "_workRightsComment": "The last line of every CV header, and the part to fill in most carefully. Every phrase here is printed on your CV word for word, as a statement you are making about your right to work somewhere, and the app checks none of it. Visa rules, age limits and reciprocal schemes change. Delete anything you are not actually eligible for and willing to use. A country with no entry of its own uses `relocation`; delete `byCountry` entirely and that phrase is used everywhere, which is the safest option. Any country can instead set `line` to the exact wording you want printed. The routes below belong to Rosa, who is made up — they show the format, not what you qualify for."
+}

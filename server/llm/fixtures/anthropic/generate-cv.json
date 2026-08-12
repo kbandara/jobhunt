@@ -1,0 +1,25 @@
+{
+  "synthetic": true,
+  "note": "SYNTHETIC — hand-written to match the provider wire shape, never recorded from a live call. Replace with `npm run record-fixtures`.",
+  "provider": "anthropic",
+  "task": "generate-cv",
+  "status": 200,
+  "body": {
+    "id": "msg_synthetic_generate_cv",
+    "type": "message",
+    "role": "assistant",
+    "model": "claude-opus-5",
+    "content": [
+      {
+        "type": "text",
+        "text": "{\n  \"summary\": {\n    \"text\": \"Computational neuroscientist moving into model evaluation, with seven years of applied statistics across government analytics and research.\",\n    \"evidence_ids\": [\n      \"edu-phd\",\n      \"eval-platform\"\n    ]\n  },\n  \"sections\": [\n    {\n      \"heading\": \"Selected experience\",\n      \"entries\": [\n        {\n          \"title\": \"Research Assistant\",\n          \"org\": \"Example University\",\n          \"dates\": \"June 2021 - July 2022\",\n          \"line\": null,\n          \"bullets\": [\n            {\n              \"text\": \"Built a 13-construct behavioural battery and ran 20 experiments against it.\",\n              \"evidence_ids\": [\n                \"eval-platform\"\n              ]\n            },\n            {\n              \"text\": \"Gated each Bayesian model on parameter recovery before any inference was reported.\",\n              \"evidence_ids\": [\n                \"eval-platform\",\n                \"method-bayes\"\n              ]\n            }\n          ],\n          \"evidence_ids\": []\n        }\n      ]\n    },\n    {\n      \"heading\": \"Publications\",\n      \"entries\": [\n        {\n          \"title\": null,\n          \"org\": null,\n          \"dates\": null,\n          \"line\": \"Example, A. and Example, B. (2025). A synthetic paper title. Journal of Examples.\",\n          \"bullets\": [],\n          \"evidence_ids\": [\n            \"pub-example\"\n          ]\n        }\n      ]\n    }\n  ],\n  \"gaps\": [\n    {\n      \"evidence_id\": \"eval-platform\",\n      \"wanted\": \"a quantified outcome for the battery\"\n    }\n  ],\n  \"changes_made\": [\n    \"Led with evaluation work, as the ai-eval profile requires.\"\n  ]\n}"
+      }
+    ],
+    "stop_reason": "end_turn",
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 9120,
+      "output_tokens": 742
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "_comment": "Rule R5: the clichés house-style.md forbids. `strings` are matched case-insensitively as plain substrings; `patterns` are regular expressions carrying an `id` and a `message`. Extend this freely — it is config, not code. False-credential claims are deliberately NOT here: they depend on your name and on what profile-meta.json says you hold, so R4 builds those checks from your own data instead of from a fixed list (D013 — a document may never claim an unawarded qualification, and that rule is never negotiable).",
+  "strings": [
+    "team player",
+    "fast learner",
+    "hit the ground running",
+    "results-driven",
+    "results driven",
+    "passionate about",
+    "think outside the box",
+    "self-starter",
+    "go-getter",
+    "proven track record"
+  ],
+  "patterns": []
+}

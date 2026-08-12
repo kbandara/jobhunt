@@ -1,0 +1,58 @@
+{
+  "id": "data-science",
+  "description": "Data science and machine learning roles where the reader is technical and wants to see what you have built, modelled and shipped. Sits between industry and industry-research: more depth on method and stack than industry, less emphasis on publishing than industry-research.",
+  "targets": [
+    "data scientist",
+    "senior data scientist",
+    "machine learning engineer",
+    "applied scientist",
+    "quantitative analyst",
+    "decision scientist",
+    "ml engineer"
+  ],
+  "evidenceProfiles": [
+    "*"
+  ],
+  "register": "mixed",
+  "sections": [
+    {
+      "id": "summary"
+    },
+    {
+      "id": "skills"
+    },
+    {
+      "id": "experience"
+    },
+    {
+      "id": "projects"
+    },
+    {
+      "id": "education"
+    },
+    {
+      "id": "publications",
+      "max": 3
+    }
+  ],
+  "lengthPages": 2,
+  "publications": {
+    "policy": "brief",
+    "count": 3,
+    "style": "one-line"
+  },
+  "clearance": "mention",
+  "techSectionName": "Technical Skills",
+  "summaryAlways": true,
+  "criteriaDoc": false,
+  "kindPriority": {
+    "project": 6,
+    "role": 6,
+    "skill": 5,
+    "finding": 4,
+    "education": 3,
+    "publication": 2,
+    "award": 1,
+    "service": 1
+  }
+}

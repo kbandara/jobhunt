@@ -1,0 +1,156 @@
+[
+  {
+    "name": "Anthropic",
+    "ats": "greenhouse",
+    "ats_slug": "anthropic",
+    "profiles": ["ai-eval", "research"],
+    "why": "Alignment, evals and interpretability; Sydney presence. The anchor target."
+  },
+  {
+    "name": "OpenAI",
+    "ats": "ashby",
+    "ats_slug": "openai",
+    "profiles": ["ai-eval", "research"],
+    "why": "Preparedness and model-behaviour evaluation work; large board, filter hard."
+  },
+  {
+    "name": "Google DeepMind",
+    "ats": "greenhouse",
+    "ats_slug": "deepmind",
+    "profiles": ["ai-eval", "research"],
+    "why": "AGI safety and evaluation research; research-scientist ladder fits the PhD."
+  },
+  {
+    "name": "METR",
+    "ats": "lever",
+    "ats_slug": "metr",
+    "profiles": ["ai-eval", "research"],
+    "why": "Dangerous-capability evaluations. Measurement of model ability is literally psychometrics."
+  },
+  {
+    "name": "Apollo Research",
+    "ats": "lever",
+    "ats_slug": "apolloresearch",
+    "profiles": ["ai-eval", "research"],
+    "why": "Deception and scheming evals; small team, experimental-design skills transfer directly."
+  },
+  {
+    "name": "Epoch AI",
+    "ats": "lever",
+    "ats_slug": "epoch-ai",
+    "profiles": ["ai-eval", "research"],
+    "why": "Benchmark construction and quantitative AI trend analysis; heavy stats content."
+  },
+  {
+    "name": "FAR.AI",
+    "ats": "lever",
+    "ats_slug": "far-ai",
+    "profiles": ["ai-eval", "research"],
+    "why": "Independent alignment research org; research-engineer and RS roles."
+  },
+  {
+    "name": "Goodfire",
+    "ats": "greenhouse",
+    "ats_slug": "goodfire",
+    "profiles": ["ai-eval", "research"],
+    "why": "Interpretability startup; mechanistic work close to the circuit-discovery interests."
+  },
+  {
+    "name": "UK AI Security Institute",
+    "ats": "greenhouse",
+    "ats_slug": "aisi",
+    "profiles": ["ai-eval", "gov"],
+    "why": "Government evaluation body — the one place where the gov profile and the ai-eval profile are the same job."
+  },
+  {
+    "name": "Thinking Machines Lab",
+    "ats": "greenhouse",
+    "ats_slug": "thinkingmachines",
+    "profiles": ["ai-eval", "research"],
+    "why": "Research lab hiring research and infrastructure staff; evaluation-adjacent."
+  },
+  {
+    "name": "Scale AI",
+    "ats": "greenhouse",
+    "ats_slug": "scaleai",
+    "profiles": ["ai-eval", "industry"],
+    "why": "SEAL evaluation lab plus data-quality science roles; measurement-heavy."
+  },
+  {
+    "name": "Cohere",
+    "ats": "ashby",
+    "ats_slug": "cohere",
+    "profiles": ["ai-eval", "industry"],
+    "why": "Model evaluation and applied research; remote-friendly across timezones."
+  },
+  {
+    "name": "ElevenLabs",
+    "ats": "ashby",
+    "ats_slug": "elevenlabs",
+    "profiles": ["industry", "ai-eval"],
+    "why": "Audio models with real perceptual-evaluation problems; distributed team."
+  },
+  {
+    "name": "Perplexity",
+    "ats": "ashby",
+    "ats_slug": "perplexity",
+    "profiles": ["industry", "ai-eval"],
+    "why": "Search quality measurement and ranking evaluation; applied-scientist roles."
+  },
+  {
+    "name": "Hume AI",
+    "ats": "greenhouse",
+    "ats_slug": "humeai",
+    "profiles": ["research", "ai-eval"],
+    "why": "Emotion and affective-computing models — the closest AI lab to the cognitive-science background."
+  },
+  {
+    "name": "Slingshot AI",
+    "ats": "ashby",
+    "ats_slug": "slingshotai",
+    "profiles": ["research", "industry"],
+    "why": "Foundation model for psychology/therapy; clinical measurement is the core problem."
+  },
+  {
+    "name": "Limbic",
+    "ats": "ashby",
+    "ats_slug": "limbic",
+    "profiles": ["research", "industry"],
+    "why": "AI triage and outcome measurement inside NHS talking therapies; clinical-trial evidence base."
+  },
+  {
+    "name": "Eleos Health",
+    "ats": "greenhouse",
+    "ats_slug": "eleoshealth",
+    "profiles": ["industry", "research"],
+    "why": "NLP over behavioural-health sessions; publishes on measurement validity."
+  },
+  {
+    "name": "Big Health",
+    "ats": "lever",
+    "ats_slug": "bighealth",
+    "profiles": ["research", "industry"],
+    "why": "Digital CBT (Sleepio/Daylight) evaluated in RCTs; trial design and psychometrics are the job."
+  },
+  {
+    "name": "Lyra Health",
+    "ats": "lever",
+    "ats_slug": "lyrahealth",
+    "profiles": ["industry", "research"],
+    "why": "Mental-health benefits platform with an outcomes-research group; large board, filter for data/science."
+  },
+  {
+    "name": "Modern Health",
+    "ats": "greenhouse",
+    "ats_slug": "modernhealth",
+    "profiles": ["industry", "research"],
+    "why": "Workplace mental-health platform; clinical data science and outcomes measurement."
+  },
+  {
+    "name": "Talkspace",
+    "ats": "greenhouse",
+    "ats_slug": "talkspace",
+    "profiles": ["industry", "research"],
+    "why": "Teletherapy at scale; data science over treatment outcomes."
+  }
+]

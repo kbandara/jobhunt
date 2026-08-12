@@ -1,0 +1,59 @@
+{
+  "id": "teaching",
+  "description": "Lecturing, teaching-focused and education-development posts. Leads with what you have taught and what changed because of it.",
+  "targets": [
+    "lecturer",
+    "teaching fellow",
+    "tutor",
+    "education developer",
+    "curriculum design"
+  ],
+  "evidenceProfiles": [
+    "*"
+  ],
+  "register": "mixed",
+  "sections": [
+    {
+      "id": "summary"
+    },
+    {
+      "id": "teaching"
+    },
+    {
+      "id": "experience"
+    },
+    {
+      "id": "service"
+    },
+    {
+      "id": "publications",
+      "max": 4
+    },
+    {
+      "id": "skills"
+    },
+    {
+      "id": "education"
+    }
+  ],
+  "lengthPages": 3,
+  "publications": {
+    "policy": "selected",
+    "count": 4,
+    "style": "one-line"
+  },
+  "clearance": "omit",
+  "techSectionName": "Skills",
+  "summaryAlways": true,
+  "criteriaDoc": false,
+  "kindPriority": {
+    "role": 6,
+    "service": 5,
+    "education": 4,
+    "skill": 3,
+    "project": 3,
+    "award": 2,
+    "publication": 2,
+    "finding": 1
+  }
+}

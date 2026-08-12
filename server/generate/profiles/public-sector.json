@@ -1,0 +1,52 @@
+{
+  "id": "public-sector",
+  "description": "Government, agency and NGO roles. Plain register, delivery and stakeholders first, and selection criteria answered in their own document.",
+  "targets": [
+    "government",
+    "public service",
+    "agency",
+    "NGO",
+    "policy"
+  ],
+  "evidenceProfiles": [
+    "*"
+  ],
+  "register": "general",
+  "sections": [
+    {
+      "id": "summary"
+    },
+    {
+      "id": "experience"
+    },
+    {
+      "id": "skills"
+    },
+    {
+      "id": "education"
+    },
+    {
+      "id": "service"
+    }
+  ],
+  "lengthPages": 3,
+  "publications": {
+    "policy": "omit",
+    "count": 0,
+    "style": "one-line"
+  },
+  "clearance": "mention",
+  "techSectionName": "Technical Skills",
+  "summaryAlways": true,
+  "criteriaDoc": true,
+  "kindPriority": {
+    "role": 6,
+    "skill": 5,
+    "education": 4,
+    "service": 3,
+    "award": 2,
+    "project": 2,
+    "finding": 1,
+    "publication": 0
+  }
+}

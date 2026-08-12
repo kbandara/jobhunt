@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>job_hunt</title>
+<!--
+  Modern geometric fonts for a premium, high-contrast UI.
+  Outfit for structural headings, Inter for high-legibility UI text.
+-->
+<!-- Served from this folder, not from Google. The app promises that nothing about
+     you leaves your machine, and a stylesheet fetched on every launch made that
+     untrue: it sent Google your IP and, via the Referer, the fact that you were
+     using this. It also meant no webfonts offline. See client/vendor/fonts/fonts.css. -->
+<link rel="stylesheet" href="./vendor/fonts/fonts.css">
+<link rel="stylesheet" href="./style.css">
+<!--
+  A drawn mark rather than a file, so there is nothing to keep in sync and no
+  404 on every page load. It is a page with a tick on it — the thing this app
+  makes and the thing it checks — in the same 1.6 stroke as the interface icons.
+  The inline <style> flips it for a dark browser theme; a favicon cannot inherit
+  currentColor because nothing around it has a colour.
+-->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231e2b3d' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cstyle%3E@media(prefers-color-scheme:dark){*{stroke:%23c9d4e6}}%3C/style%3E%3Cpath d='M14 2.6H6.4a1.8 1.8 0 0 0-1.8 1.8v15.2a1.8 1.8 0 0 0 1.8 1.8h11.2a1.8 1.8 0 0 0 1.8-1.8V7.8Z'/%3E%3Cpath d='M14 2.6v5.2h5.4'/%3E%3Cpath d='m8.4 14.2 2.4 2.4 4.8-4.8'/%3E%3C/svg%3E">
+<!-- Matches the stark high-contrast theme of the app. -->
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0f19" media="(prefers-color-scheme: dark)">
+<!--
+  The import map MUST come before any module script: vendor/preact-hooks.mjs
+  imports the bare name "preact", and the browser resolves that name using this
+  map. No build step, no bundler — this is the whole toolchain (DECISIONS D001).
+-->
+<script type="importmap">
+{ "imports": { "preact": "./vendor/preact.mjs" } }
+</script>
+<!--
+  Theme, resolved before the first paint so the page never flashes white and
+  then turn dark. "auto" follows the operating system; light and dark are
+  chosen explicitly in the header. The stylesheet only ever looks at the
+  resolved data-theme attribute, so there is one set of dark colours, not two.
+-->
+<script>
+  (function () {
+    var stored = null;
+    try { stored = localStorage.getItem('jobhunt-theme'); } catch (e) { /* private mode */ }
+    var choice = stored === 'light' || stored === 'dark' ? stored : 'auto';
+    var dark = choice === 'dark'
+      || (choice === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    document.documentElement.dataset.themeChoice = choice;
+  })();
+</script>
+</head>
+<body>
+<div id="app">Loading…</div>
+<script type="module" src="./app.js"></script>
+</body>
+</html>

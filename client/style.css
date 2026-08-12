@@ -1,0 +1,4513 @@
+/* WHY: plain CSS, no framework — one person, one screen, and a file you can read
+   and change. Organised in labelled sections; every colour, size and space is a
+   variable at the top so a change happens in one place.
+
+   Two things on this page must never be missed: a red validator error, and the
+   line saying a fit score was capped. They get the strongest colour on screen
+   and everything else stays deliberately quiet. That is the whole colour
+   strategy, stated once: the interface itself is ink and paper, and the only
+   saturated colour anywhere is carrying a finding. When nothing is wrong the
+   screen is grey; when something is wrong you cannot miss where.
+
+   ==========================================================================
+   0. Type
+   --------------------------------------------------------------------------
+   Three faces, self-hosted in client/fonts/ so the app works with no network
+   and looks the same on every machine. The old stack asked for "Segoe UI, then
+   whatever" — which meant the design was different on your laptop than on any
+   other, and none of those versions had been looked at.
+
+   Newsreader   — headings, and the fit score. A text face with an optical-size
+                  axis, so it holds at 12px and at 30px. This app types-sets
+                  documents for a living; the interface should read like one.
+   IBM Plex Sans — every control and label. Engineered rather than friendly,
+                  with figures that line up in a column.
+   IBM Plex Mono — the markdown editor, evidence refs, elapsed seconds. Mono
+                  where the characters are data, never as decoration.
+   ========================================================================== */
+
+/* Fonts are loaded via Google Fonts CDN in index.html */
+
+/* ==========================================================================
+   1. Design tokens
+   ========================================================================== */
+
+:root {
+  /* --- Neutrals: Stark, clean high-contrast --- */
+  --bg: #f8fafc;
+  --panel: #ffffff;
+  --panel-2: #f1f5f9;
+  --ink: #0f172a;
+  --ink-soft: #334155;
+  --muted: #64748b;
+  --line: #e2e8f0;        
+  --line-strong: #cbd5e1; 
+  --grid-color: rgba(15, 23, 42, 0.04);
+
+  /* --- Accent: Vibrant Electric Blue --- */
+  --accent: #2563eb;
+  --accent-ink: #1d4ed8;
+  --accent-soft: #dbeafe;
+  --on-accent: #ffffff;
+  --link: #2563eb;
+
+  /* --- Semantic: Vibrant statuses --- */
+  --ok: #059669;
+  --ok-bg: #ecfdf5;
+  --ok-line: #a7f3d0;
+  --warn: #d97706;
+  --warn-bg: #fffbeb;
+  --warn-line: #fde68a;
+  --error: #dc2626;
+  --error-bg: #fef2f2;
+  --error-line: #fecaca;
+  --info: #0284c7;
+  --info-bg: #f0f9ff;
+  --info-line: #bae6fd;
+
+  /* --- Board lanes --- */
+  --col-wishlist: #94a3b8;
+  --col-drafting: #d97706;
+  --col-applied: #2563eb;
+  --col-interviewing: #7c3aed;
+  --col-offer: #059669;
+  --col-rejected: #64748b;
+
+  /* --- Type scale --- */
+  --t-display: 2rem;     /* 32px */
+  --t-title: 1.25rem;    /* 20px */
+  --t-lead: 1.125rem;    /* 18px */
+  --t-body: 1rem;        /* 16px */
+  --t-ui: 0.875rem;      /* 14px */
+  --t-small: 0.8125rem;  /* 13px */
+  --t-micro: 0.75rem;    /* 12px */
+
+  --measure: 68ch;
+
+  /* --- Space --- */
+  --s1: 0.25rem;  
+  --s2: 0.5rem;   
+  --s3: 0.75rem;  
+  --s4: 1rem;     
+  --s5: 1.5rem;   
+  --s6: 2rem;     
+  --s7: 3rem;     
+  --s8: 4rem;     
+
+  /* --- Shape --- */
+  --r-sm: 8px;
+  --r: 12px;
+  --r-lg: 16px;
+  --r-xl: 24px;
+  --tap: 2.75rem; 
+
+  /* --- Depth: Layered, modern shadows --- */
+  --shadow: 0 1px 3px rgba(15, 23, 42, 0.05), 0 4px 6px rgba(15, 23, 42, 0.02);
+  --shadow-lift: 0 4px 6px rgba(15, 23, 42, 0.05), 0 10px 15px rgba(15, 23, 42, 0.03);
+  --shadow-over: 0 10px 15px rgba(15, 23, 42, 0.08), 0 20px 25px rgba(15, 23, 42, 0.04), 0 0 0 1px rgba(15, 23, 42, 0.02);
+
+  /* --- Motion --- */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --fast: 150ms;
+  --mid: 250ms;
+  --slow: 400ms;
+
+  --font: 'Inter', system-ui, sans-serif;
+  --display: 'Outfit', 'Inter', system-ui, sans-serif;
+  --mono: 'Plex Mono', ui-monospace, monospace;
+}
+
+/* Dark mode. A small script in index.html resolves the choice (auto / light /
+   dark) before the first paint and writes data-theme onto <html>, so these are
+   the only dark colours in the file — there is no second copy to keep in sync,
+   and no white flash before the stylesheet catches up. */
+:root[data-theme='dark'] {
+  --bg: #0b0f19;
+  --panel: #111827;
+  --panel-2: #1f2937;
+  --ink: #f8fafc;
+  --ink-soft: #cbd5e1;
+  --muted: #94a3b8;
+  --line: #1e293b;
+  --line-strong: #334155;
+  --grid-color: rgba(248, 250, 252, 0.03);
+
+  --accent: #3b82f6;
+  --accent-ink: #60a5fa;
+  --accent-soft: #1e3a8a;
+  --on-accent: #ffffff;
+  --link: #60a5fa;
+
+  --ok: #10b981;
+  --ok-bg: #064e3b;
+  --ok-line: #047857;
+  --warn: #f59e0b;
+  --warn-bg: #78350f;
+  --warn-line: #92400e;
+  --error: #ef4444;
+  --error-bg: #7f1d1d;
+  --error-line: #991b1b;
+  --info: #38bdf8;
+  --info-bg: #0c4a6e;
+  --info-line: #075985;
+
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 4px 6px rgba(0, 0, 0, 0.2);
+  --shadow-lift: 0 4px 6px rgba(0, 0, 0, 0.4), 0 10px 15px rgba(0, 0, 0, 0.3);
+  --shadow-over: 0 10px 15px rgba(0, 0, 0, 0.5), 0 20px 25px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+
+  --col-drafting: #d97706;
+  --col-applied: #6f9fd8;
+  --col-interviewing: #a58ede;
+  --col-offer: #6fc191;
+
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-lift: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --shadow-over: 0 12px 48px rgba(0, 0, 0, 0.6);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   2. Base typography
+   ========================================================================== */
+
+body {
+  margin: 0;
+  font: var(--t-body) / 1.6 var(--font);
+  color: var(--ink);
+  background-color: var(--bg);
+  background-image: 
+    linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--display);
+  font-weight: 500;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--t-display);
+  line-height: 1.15;
+  letter-spacing: -0.011em;
+  margin: 0 0 var(--s2);
+}
+h2 {
+  font-size: var(--t-title);
+  line-height: 1.3;
+  margin: 0 0 var(--s3);
+}
+/* h3 used to be a 11px uppercase micro-label, which made every section heading
+   read as a caption. It is a heading again; the eyebrow treatment moved to
+   .field-label, where a label is genuinely what is wanted. */
+h3 {
+  font-size: var(--t-body);
+  line-height: 1.35;
+  margin: var(--s5) 0 var(--s2);
+}
+h4 {
+  font-size: var(--t-ui);
+  margin: var(--s4) 0 var(--s1);
+}
+
+p {
+  margin: 0 0 var(--s3);
+  max-width: var(--measure);
+}
+p:last-child {
+  margin-bottom: 0;
+}
+
+a {
+  color: var(--link);
+  text-decoration-color: color-mix(in srgb, currentColor 30%, transparent);
+  text-underline-offset: 2px;
+  transition: text-decoration-color var(--fast) var(--ease);
+}
+a:hover {
+  text-decoration-color: currentColor;
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.9em;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  padding: 0.05em 0.3em;
+  border-radius: 4px;
+}
+
+strong {
+  font-weight: 600;
+}
+
+.muted {
+  color: var(--muted);
+}
+.small {
+  font-size: var(--t-small);
+}
+.micro {
+  font-size: var(--t-micro);
+}
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* A label above a value: the one place small uppercase is right, because it is
+   naming a field rather than heading a section. */
+.field-label {
+  font-size: var(--t-micro);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-family: var(--font);
+}
+
+/* Visible keyboard focus everywhere — the default ring disappears on custom
+   backgrounds, and this app is usable entirely from the keyboard. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* --- Glassmorphism & Modern Utils --- */
+.glass {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+:root[data-theme='dark'] .glass {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stagger-1 { animation-delay: 50ms !important; }
+.stagger-2 { animation-delay: 100ms !important; }
+.stagger-3 { animation-delay: 150ms !important; }
+.stagger-4 { animation-delay: 200ms !important; }
+.stagger-5 { animation-delay: 250ms !important; }
+
+@keyframes blurInUp {
+  0% { opacity: 0; transform: translateY(12px) scale(0.98); filter: blur(4px); }
+  100% { opacity: 1; transform: none; filter: none; }
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes pulseSoft {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(0.95); }
+}
+
+@keyframes floatIcon {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* `backwards`, not `both`, and the difference is not cosmetic.
+   `both` keeps the last keyframe applied for good — and a filled transform ends
+   up as `matrix(1, 0, 0, 1, 0, 0)`, a filled filter as `blur(0px)`. Both are
+   invisible, and both make the element a containing block for any
+   `position: fixed` descendant. Four elements on the way down to a job page
+   carry this class, so a fixed panel inside one was being sized and placed
+   against a 2,300px-tall card instead of the window.
+
+   `backwards` still applies the FIRST frame during the stagger delay, which is
+   the only reason `both` was wanted — without it, elements flash at full
+   opacity before their turn. What it drops is the pointless permanent hold on
+   an animation that finished 200ms after the page loaded. */
+.animate-blur-in-up {
+  animation: blurInUp var(--mid) var(--ease-spring) backwards;
+}
+.animate-fade-in {
+  animation: fadeIn var(--fast) var(--ease) both;
+}
+.animate-pulse-soft {
+  animation: pulseSoft 3s ease-in-out infinite;
+}
+.animate-float {
+  animation: floatIcon 4s ease-in-out infinite;
+}
+.animate-spin-slow {
+  animation: spinSlow 8s linear infinite;
+}
+.icon-draw {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: drawStroke 2s ease-out forwards;
+}
+@keyframes drawStroke {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Straight to the work, for anyone who does not want to tab the header first. */
+.skip-link {
+  position: absolute;
+  left: var(--s4);
+  top: var(--s2);
+  z-index: 100;
+  padding: var(--s2) var(--s3);
+  background: var(--accent);
+  color: var(--on-accent);
+  border-radius: var(--r-sm);
+  font-size: var(--t-ui);
+  transform: translateY(-200%);
+  transition: transform var(--mid) var(--ease);
+}
+.skip-link:focus {
+  transform: none;
+}
+
+/* Icons: drawn, one stroke weight, sized in em so they match their label. */
+.icon {
+  flex: none;
+  vertical-align: -0.14em;
+}
+
+/* ==========================================================================
+   3. Header
+   ========================================================================== */
+
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+  flex-wrap: wrap;
+  padding: var(--s3) var(--s5);
+  margin: var(--s4) var(--s5);
+  border-radius: var(--r-xl);
+  position: sticky;
+  top: var(--s4);
+  z-index: 20;
+  box-shadow: var(--shadow-lift);
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-right: auto;
+  min-width: 0;
+}
+.brand-name {
+  font-family: var(--display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  text-decoration: none;
+  color: var(--ink);
+  line-height: 1.1;
+  /* It is the way home from every screen, so it gets a real hit area rather
+     than the 22px the glyphs happen to occupy. */
+  padding: var(--s1) 0;
+  align-self: flex-start;
+}
+.brand-name:hover {
+  color: var(--accent);
+}
+.brand-meta {
+  font-size: var(--t-micro);
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app-header nav {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  flex-wrap: wrap;
+}
+
+/* Model spend. It is a number you check, so it is set in lining figures and
+   sits in a control that says it can be re-read. */
+.cost-pill {
+  min-height: var(--tap);
+  font-size: var(--t-small);
+  font-variant-numeric: tabular-nums;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+  color: var(--muted);
+  padding: 0 var(--s3);
+  border-radius: 999px;
+  gap: var(--s2);
+}
+.cost-pill:hover:not(:disabled) {
+  border-color: var(--line-strong);
+  color: var(--ink-soft);
+  background: var(--panel-2);
+}
+.cost-pill strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   4. Layout
+   ========================================================================== */
+
+.page {
+  max-width: 88rem;
+  margin: 0 auto;
+  padding: var(--s5) var(--s5) var(--s8);
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--r-xl);
+  padding: var(--s5);
+  margin-bottom: var(--s4);
+  box-shadow: var(--shadow-lift);
+  transition: transform var(--fast) var(--ease), box-shadow var(--fast) var(--ease);
+}
+.panel > :first-child {
+  margin-top: 0;
+}
+.panel > :last-child {
+  margin-bottom: 0;
+}
+
+/* A panel head: title on the left, its one control on the right. */
+.panel-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s3);
+  margin-bottom: var(--s3);
+  flex-wrap: wrap;
+}
+.panel-head h2 {
+  margin: 0;
+}
+
+.split {
+  display: grid;
+  grid-template-columns: minmax(22rem, 1fr) minmax(28rem, 1.4fr);
+  gap: var(--s4);
+  align-items: start;
+}
+
+/* Tried making the left column sticky so it followed you past the long checks
+   panel. It clipped the requirements list — the one thing on that side you read
+   against the draft — so it is gone. Blank space beside a short column costs
+   nothing; a hidden hard filter costs an application. */
+
+.page-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--s4);
+  margin-bottom: var(--s5);
+  flex-wrap: wrap;
+}
+.page-head p {
+  margin: 0;
+}
+
+/* The way back, above the title. Replaces a persistent "Board" nav item that
+   was pointing at the page you were already on half the time. */
+.backlink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  font-size: var(--t-ui);
+  color: var(--muted);
+  text-decoration: none;
+  margin-bottom: var(--s3);
+  padding: var(--s1) 0;
+}
+.backlink:hover {
+  color: var(--ink);
+}
+.backlink .icon {
+  transition: transform var(--mid) var(--ease);
+}
+.backlink:hover .icon {
+  transform: translateX(-2px);
+}
+
+.facts {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: var(--t-ui);
+}
+.facts li {
+  padding: var(--s2) 0;
+  display: flex;
+  gap: var(--s4);
+  border-bottom: 1px solid var(--line);
+}
+.facts li:last-child {
+  border-bottom: none;
+}
+.facts li > span:first-child {
+  flex: 0 0 9rem;
+  color: var(--muted);
+}
+
+/* ==========================================================================
+   5. Buttons
+   --------------------------------------------------------------------------
+   One primary per view, and it is ink. Everything else is a quiet outline, so
+   a screen with six controls still has one obvious thing to press.
+   ========================================================================== */
+
+.button,
+button {
+  font: inherit;
+  font-size: var(--t-ui);
+  font-weight: 500;
+  min-height: var(--tap);
+  padding: var(--s2) var(--s4);
+  border: 1px solid var(--line-strong);
+  background: var(--panel);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  color: var(--ink);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s2);
+  white-space: nowrap;
+  transition:
+    background var(--fast) var(--ease),
+    border-color var(--fast) var(--ease),
+    color var(--fast) var(--ease),
+    box-shadow var(--fast) var(--ease),
+    transform var(--fast) var(--ease);
+}
+.button:hover:not(:disabled),
+button:hover:not(:disabled) {
+  background: var(--panel-2);
+  border-color: var(--ink-soft);
+}
+.button:active:not(:disabled),
+button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+button:disabled,
+.button:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.button.primary,
+button.primary {
+  background: var(--accent);
+  color: var(--on-accent);
+  border-color: var(--accent);
+  box-shadow: var(--shadow);
+}
+.button.primary:hover:not(:disabled),
+button.primary:hover:not(:disabled) {
+  background: var(--accent-ink);
+  border-color: var(--accent-ink);
+  color: var(--on-accent);
+  box-shadow: var(--shadow-lift);
+}
+
+/* Quiet: reads as available without competing. */
+.button.ghost,
+button.ghost {
+  border-color: transparent;
+  background: none;
+  color: var(--ink-soft);
+}
+.button.ghost:hover:not(:disabled),
+button.ghost:hover:not(:disabled) {
+  background: var(--panel-2);
+  border-color: var(--line);
+}
+
+.button.small,
+button.small {
+  font-size: var(--t-small);
+  min-height: 2rem;
+  padding: var(--s1) var(--s3);
+}
+
+/* Square, for an icon on its own. Still 44px — this is what a thumb hits. */
+.button.icon-only,
+button.icon-only {
+  width: var(--tap);
+  padding: 0;
+}
+
+/* An action inside a sentence: reads as part of the sentence, not as a button
+   competing with the page's real controls. */
+.link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  min-height: 0;
+  border-radius: 0;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  display: inline;
+  white-space: normal;
+}
+.link-button:hover:not(:disabled) {
+  background: none;
+  border: none;
+  opacity: 0.72;
+}
+
+/* Theme: three icons rather than three words. "Auto Light Dark" was 150px of a
+   header that had to fit on a 390px screen, for a setting nobody changes twice. */
+.theme-toggle {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel-2);
+  padding: 2px;
+  gap: 2px;
+}
+.theme-toggle button {
+  border: none;
+  background: none;
+  border-radius: 999px;
+  min-height: 2.25rem;
+  width: 2.25rem;
+  padding: 0;
+  color: var(--muted);
+}
+.theme-toggle button:hover:not(:disabled) {
+  background: var(--panel);
+  border: none;
+  color: var(--ink);
+}
+.theme-toggle button.active {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.theme-toggle button.active:hover {
+  background: var(--accent-ink);
+  color: var(--on-accent);
+}
+
+/* ==========================================================================
+   6. Notices
+   --------------------------------------------------------------------------
+   Replaces the old .banner. Same job, no 3px left tab: the tint carries the
+   severity and a drawn icon names it, which also means the meaning survives
+   for anyone who cannot separate the tints.
+   ========================================================================== */
+
+.notice {
+  display: flex;
+  gap: var(--s3);
+  align-items: flex-start;
+  padding: var(--s3) var(--s4);
+  border-radius: var(--r);
+  margin-bottom: var(--s4);
+  border: 1px solid;
+  font-size: var(--t-ui);
+  line-height: 1.55;
+}
+.notice-icon {
+  flex: none;
+  margin-top: 0.15em;
+}
+.notice-body > :last-child {
+  margin-bottom: 0;
+}
+.notice strong {
+  font-weight: 600;
+}
+.notice.warning {
+  background: var(--warn-bg);
+  border-color: var(--warn-line);
+  color: var(--warn);
+}
+.notice.error {
+  background: var(--error-bg);
+  border-color: var(--error-line);
+  color: var(--error);
+}
+.notice.info {
+  background: var(--info-bg);
+  border-color: var(--info-line);
+  color: var(--info);
+}
+.notice .hint {
+  margin-top: var(--s1);
+  opacity: 0.92;
+}
+.notice-actions {
+  margin-top: var(--s3);
+  display: flex;
+  gap: var(--s2);
+  flex-wrap: wrap;
+}
+
+/* A parser error names a line number, and a line number must not be reflowed
+   into a sentence — it is the one part you are going to act on. */
+.notice-detail {
+  margin: var(--s2) 0 0;
+  padding: var(--s2) var(--s3);
+  font: var(--t-micro) / 1.6 var(--mono);
+  white-space: pre-wrap;
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  border-radius: var(--r-sm);
+  max-height: 12rem;
+  overflow-y: auto;
+}
+
+/* ==========================================================================
+   7. The step rail
+   --------------------------------------------------------------------------
+   Where you are in the application, which the app never used to say. It is the
+   one piece of motion the interface authors: a step completing fills its
+   connector and settles the mark. Everything else just changes state quietly.
+   ========================================================================== */
+
+.rail {
+  margin-bottom: var(--s5);
+}
+.rail-track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: var(--s1);
+}
+.rail-step {
+  position: relative;
+  display: flex;
+  min-width: 0;
+}
+
+/* The connector, drawn from the step to its neighbour and filled once the step
+   is done. scaleX, so an advancing rail never lays the page out again. */
+.rail-step::after {
+  content: '';
+  position: absolute;
+  top: calc(var(--s3) + 0.9rem);
+  left: calc(50% + 1.4rem);
+  right: calc(-50% + 1.4rem);
+  height: 1px;
+  background: var(--line);
+  z-index: 0;
+}
+.rail-step:last-child::after {
+  display: none;
+}
+.rail-step::before {
+  content: '';
+  position: absolute;
+  top: calc(var(--s3) + 0.9rem);
+  left: calc(50% + 1.4rem);
+  right: calc(-50% + 1.4rem);
+  height: 1px;
+  background: var(--ok);
+  z-index: 1;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--slow) var(--ease);
+}
+.rail-step.is-done::before {
+  transform: scaleX(1);
+}
+.rail-step:last-child::before {
+  display: none;
+}
+
+.rail-button {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s2);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--r);
+  padding: var(--s3) var(--s2);
+  min-height: 0;
+  text-align: center;
+  color: var(--muted);
+  white-space: normal;
+}
+.rail-button:hover:not(:disabled) {
+  background: var(--panel-2);
+  border-color: var(--line);
+}
+.rail-button:disabled {
+  opacity: 1; /* the padlock and the grey already say it; 42% would bury the label */
+  cursor: default;
+}
+
+.rail-mark {
+  width: 1.8rem;
+  height: 1.8rem;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: var(--panel);
+  color: var(--muted);
+  font-size: 0.9rem;
+  transition:
+    background var(--mid) var(--ease),
+    border-color var(--mid) var(--ease),
+    color var(--mid) var(--ease),
+    transform var(--mid) var(--ease);
+}
+.rail-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  width: 100%;
+}
+.rail-label {
+  font-size: var(--t-ui);
+  font-weight: 600;
+  color: var(--ink-soft);
+  line-height: 1.3;
+}
+.rail-summary {
+  font-size: var(--t-micro);
+  color: var(--muted);
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.rail-step.is-done .rail-mark {
+  background: var(--ok);
+  border-color: var(--ok);
+  color: var(--panel);
+}
+:root[data-theme='dark'] .rail-step.is-done .rail-mark {
+  color: var(--bg);
+}
+.rail-step.is-done .rail-label {
+  color: var(--ink);
+}
+
+.rail-step.is-now .rail-mark {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+  transform: scale(1.06);
+}
+.rail-step.is-now .rail-label {
+  color: var(--ink);
+}
+.rail-step.is-now .rail-summary {
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+
+.rail-step.is-locked .rail-mark {
+  border-style: dashed;
+  background: none;
+}
+.rail-step.is-locked .rail-label,
+.rail-step.is-locked .rail-summary {
+  color: var(--muted);
+}
+
+/* Which panel you are looking at, marked on the rail as well as on the panel.
+   Quiet: the filled mark already says which step this is, and a lifted card
+   here competed with the panel it was pointing at. */
+.rail-step.is-current .rail-button {
+  background: var(--panel);
+  border-color: var(--line);
+}
+
+/* A panel the rail has just sent you to. Brief, and only on the ring — moving
+   the panel itself would shift the thing you were sent to read. */
+@keyframes panel-called {
+  from {
+    box-shadow: 0 0 0 3px var(--accent-soft), var(--shadow);
+  }
+  to {
+    box-shadow: 0 0 0 3px transparent, var(--shadow);
+  }
+}
+.panel.called {
+  animation: panel-called 1.4s var(--ease);
+}
+
+/* ==========================================================================
+   8. Board
+   ========================================================================== */
+
+/* The gap is wide on purpose. Each lane head carries a rule under it, and at a
+   12px gap six of those rules read as one continuous strip across the page
+   rather than as six separate columns. */
+.board {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--s5);
+  align-items: start;
+}
+
+.lane {
+  min-width: 0;
+}
+.lane-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  padding-bottom: var(--s2);
+  margin-bottom: var(--s3);
+  border-bottom: 1px solid var(--line);
+}
+/* The status colour is a dot, not a 3px slab across the top of a rounded card.
+   Same information, and it stops six lanes reading as six competing headers. */
+.lane-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  flex: none;
+  background: var(--col, var(--line-strong));
+}
+.lane[data-status='wishlist'] {
+  --col: var(--col-wishlist);
+}
+.lane[data-status='drafting'] {
+  --col: var(--col-drafting);
+}
+.lane[data-status='applied'] {
+  --col: var(--col-applied);
+}
+.lane[data-status='interviewing'] {
+  --col: var(--col-interviewing);
+}
+.lane[data-status='offer'] {
+  --col: var(--col-offer);
+}
+.lane[data-status='rejected'] {
+  --col: var(--col-rejected);
+}
+
+.lane-head h2 {
+  font-family: var(--font);
+  font-size: var(--t-micro);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+}
+.lane-count {
+  font-size: var(--t-micro);
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+.lane.is-empty .lane-head {
+  border-bottom-style: dashed;
+}
+.lane.is-empty .lane-count {
+  opacity: 0.5;
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.card {
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  transition:
+    box-shadow var(--mid) var(--ease),
+    border-color var(--mid) var(--ease),
+    transform var(--mid) var(--ease);
+}
+.card:hover {
+  box-shadow: var(--shadow-lift);
+  border-color: var(--line-strong);
+  transform: translateY(-1px);
+}
+.card:focus-within {
+  border-color: var(--accent);
+}
+
+.card-title {
+  display: block;
+  padding: var(--s3) var(--s3) var(--s2);
+  text-decoration: none;
+  color: var(--ink);
+  line-height: 1.3;
+}
+.card-company {
+  font-weight: 600;
+  font-size: var(--t-ui);
+  display: block;
+}
+.card-title:hover .card-company {
+  color: var(--accent);
+}
+.card-role {
+  display: block;
+  font-size: var(--t-small);
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+.card-meta {
+  display: flex;
+  gap: var(--s1);
+  flex-wrap: wrap;
+  padding: 0 var(--s3) var(--s3);
+}
+
+.card-foot {
+  display: flex;
+  align-items: center;
+  gap: var(--s1);
+  padding: var(--s1) var(--s1) var(--s1) var(--s2);
+  border-top: 1px solid var(--line);
+}
+/* The next thing to do with this card, as a verb rather than as something to
+   work out from which badges are missing. */
+.card-next {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--t-micro);
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s1);
+  padding: var(--s2) var(--s1);
+  border-radius: var(--r-sm);
+}
+.card-next:hover {
+  color: var(--accent);
+}
+.card-next .icon {
+  transition: transform var(--mid) var(--ease);
+}
+.card-next:hover .icon {
+  transform: translateX(2px);
+}
+.card-done {
+  flex: 1;
+  font-size: var(--t-micro);
+  color: var(--muted);
+  padding-left: var(--s1);
+}
+.card-move {
+  display: flex;
+  gap: 2px;
+  flex: none;
+}
+.card-move button {
+  width: 2rem;
+  min-height: 2rem;
+  padding: 0;
+  border-color: transparent;
+  background: none;
+  color: var(--muted);
+}
+.card-move button:hover:not(:disabled) {
+  background: var(--panel-2);
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+.lane-empty {
+  color: var(--muted);
+  font-size: var(--t-micro);
+  padding: var(--s2) 0;
+  margin: 0;
+}
+
+/* The lanes with nothing in them, folded into one line on a narrow screen.
+   Six full-width empty boxes was most of the scroll on a phone. */
+.lanes-empty-note {
+  margin-top: var(--s4);
+  padding-top: var(--s3);
+  border-top: 1px solid var(--line);
+  font-size: var(--t-small);
+  color: var(--muted);
+}
+
+/* Empty state for the whole board */
+.empty-state {
+  text-align: center;
+  padding: var(--s8) var(--s5);
+  background: var(--panel);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--r-lg);
+}
+.empty-state h1 {
+  margin-bottom: var(--s3);
+}
+.empty-state p {
+  color: var(--muted);
+  max-width: 46ch;
+  margin: 0 auto var(--s5);
+}
+
+/* ==========================================================================
+   9. Badges and chips
+   ========================================================================== */
+
+.badge,
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s1);
+  font-size: var(--t-micro);
+  padding: 0.1rem var(--s2);
+  border-radius: 999px;
+  background: var(--panel-2);
+  color: var(--muted);
+  border: 1px solid var(--line);
+  white-space: nowrap;
+}
+.badge.profile {
+  background: var(--accent-soft);
+  color: var(--ink-soft);
+  border-color: transparent;
+  font-weight: 500;
+}
+.badge.cold {
+  font-style: italic;
+}
+.badge.verdict {
+  font-weight: 600;
+  border-color: transparent;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+.verdict-strong {
+  color: var(--ok);
+}
+.verdict-viable {
+  color: var(--info);
+}
+.verdict-stretch {
+  color: var(--warn);
+}
+.verdict-skip {
+  color: var(--error);
+}
+
+.severity-blocking {
+  background: var(--error-bg);
+  color: var(--error);
+  border-color: var(--error-line);
+  font-weight: 600;
+}
+.severity-significant {
+  background: var(--warn-bg);
+  color: var(--warn);
+  border-color: var(--warn-line);
+}
+.severity-minor {
+  background: var(--panel-2);
+  color: var(--muted);
+}
+
+/* ==========================================================================
+   10. Fit score
+   ========================================================================== */
+
+.score-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s3);
+  margin-bottom: var(--s3);
+}
+.score-number {
+  font-family: var(--display);
+  font-size: 3rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.score-of {
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: var(--muted);
+  margin-left: 0.1rem;
+}
+.score-row .verdict {
+  font-size: var(--t-micro);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.15rem var(--s2);
+  border-radius: 999px;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+.verdict-strong .score-number,
+.verdict-strong .verdict {
+  color: var(--ok);
+}
+.verdict-viable .score-number,
+.verdict-viable .verdict {
+  color: var(--info);
+}
+.verdict-stretch .score-number,
+.verdict-stretch .verdict {
+  color: var(--warn);
+}
+.verdict-skip .score-number,
+.verdict-skip .verdict {
+  color: var(--error);
+}
+
+.score-summary {
+  font-size: var(--t-lead);
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+/* The cap. Never quiet: a tool that rewrites its own number without saying so
+   is one you stop being able to reason about (D008). */
+.cap {
+  display: flex;
+  gap: var(--s2);
+  align-items: flex-start;
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-line);
+  color: var(--warn);
+  padding: var(--s3);
+  border-radius: var(--r-sm);
+  font-size: var(--t-small);
+  line-height: 1.5;
+  margin-bottom: var(--s3);
+}
+.cap strong {
+  font-weight: 600;
+}
+.cap .num {
+  font-family: var(--mono);
+}
+
+/* Overqualified: a warning, not an error — it is a judgement you may disagree
+   with, and the styling should not pretend otherwise. */
+.overqualified {
+  display: flex;
+  gap: var(--s2);
+  align-items: flex-start;
+  font-size: var(--t-small);
+  line-height: 1.5;
+  padding: var(--s2) var(--s3);
+  margin: var(--s3) 0;
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-line);
+  color: var(--warn);
+  border-radius: var(--r-sm);
+}
+
+/* Matched and unmet, as rows rather than bullets — the severity chip is the
+   thing being scanned, so it needs a column of its own to sit in. */
+.req-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: var(--t-ui);
+}
+.req-list li {
+  padding: var(--s2) 0;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  gap: var(--s3);
+  align-items: baseline;
+}
+.req-list li:last-child {
+  border-bottom: none;
+}
+.req-list .chip {
+  flex: none;
+  min-width: 5.5rem;
+  justify-content: center;
+}
+.req-list .req-note {
+  color: var(--muted);
+}
+.req-tick {
+  flex: none;
+  color: var(--ok);
+  margin-top: 0.15em;
+}
+
+/* ==========================================================================
+   11. Tabs
+   ========================================================================== */
+
+.tabs {
+  display: flex;
+  gap: var(--s1);
+  border-bottom: 1px solid var(--line);
+  margin-bottom: var(--s4);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+.tab {
+  border: none;
+  background: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  padding: var(--s2) var(--s3);
+  min-height: var(--tap);
+  color: var(--muted);
+  font-weight: 500;
+  transition:
+    color var(--fast) var(--ease),
+    border-color var(--fast) var(--ease);
+}
+.tab:hover:not(:disabled) {
+  background: none;
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+.tab[aria-selected='true'] {
+  color: var(--ink);
+  border-bottom-color: var(--accent);
+  font-weight: 600;
+  background: none;
+}
+.tab-count {
+  font-size: var(--t-micro);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================================
+   12. The document panel
+   --------------------------------------------------------------------------
+   Generate is the action. Everything that acts on what it produced moved to
+   the Send step, because six equal-weight controls in one row is the same as
+   no primary action at all.
+   ========================================================================== */
+
+.doc-header {
+  display: flex;
+  gap: var(--s2);
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: var(--s3);
+}
+.doc-header .spend {
+  margin-left: auto;
+  font-size: var(--t-micro);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.doc-actions {
+  display: flex;
+  gap: var(--s2);
+  align-items: center;
+  margin-top: var(--s3);
+  flex-wrap: wrap;
+}
+
+/* The profile, sitting with the draft whose shape it decides. It used to be a
+   dropdown plus three wrapped lines of the model's reasoning, in the middle of
+   the panel; the reasoning is now behind the chip that says where it came from. */
+.profile-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  flex-wrap: wrap;
+  padding: var(--s2) var(--s3);
+  margin-bottom: var(--s3);
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  font-size: var(--t-small);
+}
+.profile-row label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  margin: 0;
+  font-size: var(--t-small);
+  color: var(--muted);
+}
+.profile-why {
+  border: none;
+  background: none;
+  min-height: 1.75rem;
+  padding: 0 var(--s2);
+  color: var(--muted);
+  font-size: var(--t-micro);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.profile-why:hover:not(:disabled) {
+  background: none;
+  border: none;
+  color: var(--ink);
+}
+.profile-reason {
+  flex-basis: 100%;
+  margin: var(--s1) 0 0;
+  font-size: var(--t-small);
+  color: var(--muted);
+  line-height: 1.5;
+  animation: reveal var(--mid) var(--ease);
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+textarea.paste,
+textarea.editor,
+textarea.questions-input {
+  width: 100%;
+  font: 13.5px / 1.65 var(--mono);
+  padding: var(--s4);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  background: var(--panel);
+  color: var(--ink);
+  resize: vertical;
+  transition:
+    border-color var(--fast) var(--ease),
+    box-shadow var(--fast) var(--ease);
+}
+textarea:focus-visible {
+  border-color: var(--accent);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+textarea.paste {
+  margin-bottom: var(--s3);
+  min-height: 20rem;
+}
+
+/* --------------------------------------------------------------------------
+   The editor while it is not your
+
+   Two states, one treatment. When the model is writing, the text in the box is
+   about to be replaced and typing into it would be lost; when you are reading an
+   old version, editing in place would destroy the history. In both cases the
+   honest thing is to make the box visibly not-yours rather than to accept
+   keystrokes and quietly discard them.
+
+   The sweep is a light band crossing the text — slow, low-contrast, and gone
+   the moment the work finishes. It reads as "something is happening here"
+   without imitating a progress bar, which would be a claim about how far along
+   it is that nothing in this app can honestly make. It moves on transform:
+   animating `left` laid the page out again sixty times a second, for the whole
+   length of the longest wait in the app.
+   -------------------------------------------------------------------------- */
+
+.editor-wrap {
+  position: relative;
+}
+.editor-wrap textarea.editor {
+  transition:
+    filter var(--mid) var(--ease),
+    opacity var(--mid) var(--ease);
+}
+.editor-wrap.working textarea.editor,
+.editor-wrap.historic textarea.editor {
+  cursor: default;
+}
+.editor-wrap.working textarea.editor {
+  filter: blur(2.5px);
+  opacity: 0.5;
+  pointer-events: none;
+  user-select: none;
+}
+.editor-wrap.historic textarea.editor {
+  background: var(--panel-2);
+  color: var(--ink-soft);
+  border-style: dashed;
+}
+
+.editor-veil {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--panel) 45%, transparent);
+  font-size: var(--t-ui);
+  color: var(--ink);
+  font-weight: 500;
+  overflow: hidden;
+  animation: reveal var(--mid) var(--ease);
+}
+.editor-veil::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 40%;
+  background: linear-gradient(100deg, transparent, color-mix(in srgb, var(--accent) 9%, transparent), transparent);
+  animation: veil-sweep 2.6s ease-in-out infinite;
+}
+@keyframes veil-sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(350%);
+  }
+}
+
+.unsaved {
+  font-size: var(--t-micro);
+  font-weight: 600;
+  color: var(--warn);
+  padding: 0.1rem var(--s2);
+  border-radius: 999px;
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-line);
+}
+
+/* --------------------------------------------------------------------------
+   Versions
+   -------------------------------------------------------------------------- */
+
+.version-select {
+  font-size: var(--t-small);
+  font-family: inherit;
+  color: var(--ink-soft);
+  padding: var(--s2) var(--s2);
+  min-height: var(--tap);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--panel-2);
+  max-width: 20rem;
+}
+
+.history-bar {
+  display: flex;
+  gap: var(--s3);
+  align-items: center;
+  flex-wrap: wrap;
+  padding: var(--s2) var(--s3);
+  margin-bottom: var(--s2);
+  border: 1px solid var(--info-line);
+  border-radius: var(--r-sm);
+  background: var(--info-bg);
+  font-size: var(--t-small);
+  color: var(--info);
+  animation: reveal var(--mid) var(--ease);
+}
+.history-what {
+  flex: 1 1 16rem;
+  line-height: 1.5;
+}
+/* On its own line: it is a second thought about the comparison, not a control
+   of equal weight to Restore. */
+.history-against {
+  flex-basis: 100%;
+}
+
+/* ==========================================================================
+   What changed between two versions
+   --------------------------------------------------------------------------
+   Deliberately in the space the editor already occupies rather than in a panel
+   of its own. You are reading history — a mode you entered on purpose — and the
+   draft screen is busy enough without a fourth thing under it.
+
+   Unchanged runs are collapsed before they get here (client/views/diff.js), so
+   what is drawn is the change and a few lines around it. That is the difference
+   between answering the question and burying it: in a two-page CV where one
+   sentence moved, 95% of the lines are noise.
+   ========================================================================== */
+
+.diff {
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  background: var(--panel);
+  overflow: hidden;
+}
+.diff-waiting {
+  padding: var(--s4);
+}
+.diff-sum {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s3);
+  padding: var(--s2) var(--s3);
+  border-bottom: 1px solid var(--line);
+  background: var(--panel-2);
+  font-size: var(--t-small);
+}
+.diff-count {
+  font: var(--t-small) / 1 var(--mono);
+  font-weight: 600;
+}
+.diff-count.added {
+  color: var(--ok);
+}
+.diff-count.removed {
+  color: var(--error);
+}
+.diff-what {
+  color: var(--muted);
+  font-size: var(--t-micro);
+}
+
+.diff-lines {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 40rem;
+  overflow: auto;
+  font: 13px / 1.55 var(--mono);
+}
+.diff-line {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s2);
+  padding: 0 var(--s3) 0 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+/* The sign, not the colour, is what carries the meaning. Colour is the fast
+   read; the glyph is the one that survives printing, a colour-blind reader, and
+   a screenshot pasted into a document. */
+.diff-sign {
+  flex: none;
+  width: 1.6rem;
+  text-align: center;
+  user-select: none;
+  color: var(--muted);
+}
+.diff-text {
+  flex: 1;
+  min-width: 0;
+}
+.diff-line.add {
+  background: var(--ok-bg);
+}
+.diff-line.add .diff-sign {
+  color: var(--ok);
+}
+.diff-line.remove {
+  background: var(--error-bg);
+}
+.diff-line.remove .diff-sign {
+  color: var(--error);
+}
+.diff-line.remove .diff-text {
+  /* Not struck through. A removed line is often most of a sentence you are
+     trying to read and compare against the one below it. */
+  color: var(--ink-soft);
+}
+.diff-gap {
+  padding: var(--s1) var(--s3) var(--s1) 1.6rem;
+  background: var(--panel-2);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  font: var(--t-micro) / 1.6 var(--font);
+  color: var(--muted);
+}
+
+/* Hints: one line saying what a step actually reads. Deliberately quiet and
+   deliberately rare — the ones kept are the places where the app does something
+   you cannot see. Most of what used to be here is now said by the step rail. */
+.hint {
+  margin: var(--s2) 0 0;
+  font-size: var(--t-small);
+  line-height: 1.55;
+  color: var(--muted);
+  max-width: var(--measure);
+}
+.hint strong {
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   13. Send
+   --------------------------------------------------------------------------
+   The step the app never had. It used to stop once a draft existed: the
+   exports were three of six buttons above the editor, and moving the card was
+   somewhere else entirely, on a different screen.
+   ========================================================================== */
+
+.send-grid {
+  display: grid;
+  gap: var(--s4);
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+}
+.send-block h3 {
+  margin-top: 0;
+}
+.send-row {
+  display: flex;
+  gap: var(--s2);
+  flex-wrap: wrap;
+  align-items: center;
+}
+.status-picker {
+  display: flex;
+  gap: var(--s2);
+  flex-wrap: wrap;
+}
+.status-option {
+  font-size: var(--t-small);
+  min-height: 2.25rem;
+  padding: var(--s1) var(--s3);
+  border-radius: 999px;
+  gap: var(--s2);
+}
+.status-option[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+.status-option[aria-pressed='true']:hover:not(:disabled) {
+  background: var(--accent-ink);
+  border-color: var(--accent-ink);
+  color: var(--on-accent);
+}
+.status-option .lane-dot {
+  width: 6px;
+  height: 6px;
+}
+
+.export-group {
+  display: inline-flex;
+  gap: var(--s2);
+  align-items: center;
+  flex-wrap: wrap;
+}
+.button.copied {
+  border-color: var(--ok);
+  color: var(--ok);
+}
+.export-note,
+.export-error {
+  flex-basis: 100%;
+  font-size: var(--t-small);
+  line-height: 1.5;
+  padding: var(--s2) var(--s3);
+  border-radius: var(--r-sm);
+  margin-top: var(--s2);
+}
+.export-note {
+  color: var(--muted);
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+}
+.export-error {
+  color: var(--error);
+  background: var(--error-bg);
+  border: 1px solid var(--error-line);
+  white-space: pre-wrap;
+}
+
+/* ==========================================================================
+   14. Disclosures — publications, questions
+   ========================================================================== */
+
+.disclosure {
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  margin: var(--s3) 0;
+  background: var(--panel-2);
+}
+.disclosure-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  width: 100%;
+  padding: var(--s2) var(--s3);
+  background: none;
+  border: none;
+  border-radius: var(--r-sm);
+  font-size: var(--t-ui);
+  color: var(--ink);
+  text-align: left;
+  white-space: normal;
+}
+.disclosure-toggle:hover:not(:disabled) {
+  background: var(--panel);
+  border: none;
+}
+.disclosure-toggle strong {
+  font-weight: 600;
+}
+.disclosure-caret {
+  flex: none;
+  color: var(--muted);
+  transition: transform var(--mid) var(--ease);
+}
+.disclosure.open .disclosure-caret {
+  transform: rotate(90deg);
+}
+.disclosure-note {
+  flex: 1;
+  min-width: 0;
+  color: var(--muted);
+  font-size: var(--t-small);
+}
+.disclosure-problem {
+  color: var(--warn);
+  font-weight: 600;
+  font-size: var(--t-micro);
+  flex: none;
+}
+.disclosure-body {
+  padding: 0 var(--s3) var(--s3);
+  border-top: 1px solid var(--line);
+  animation: reveal var(--mid) var(--ease);
+}
+.disclosure-body > .muted {
+  margin: var(--s2) 0 var(--s3);
+}
+
+/* The receipt for a tick. It appears where the eye already is — directly under
+   the row that was just clicked — and fades in rather than snapping, because a
+   line that pops into place under the cursor reads as an error message. */
+.pubs-applied {
+  margin: 0;
+  padding: var(--s2) var(--s3);
+  font-size: var(--t-small);
+  color: var(--ok);
+  border-top: 1px solid var(--line);
+  animation: reveal var(--mid) var(--ease);
+}
+.pubs-applied.muted {
+  color: var(--muted);
+}
+.pubs-applied strong {
+  color: var(--warn);
+}
+
+.pubs-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.pub label {
+  display: flex;
+  gap: var(--s3);
+  align-items: flex-start;
+  padding: var(--s2);
+  border-radius: var(--r-sm);
+  margin: 0;
+  cursor: pointer;
+  transition: background var(--fast) var(--ease);
+}
+.pub label:hover {
+  background: var(--panel);
+}
+.pub input[type='checkbox'] {
+  margin-top: 0.2rem;
+  flex: none;
+  width: 1.05rem;
+  height: 1.05rem;
+  accent-color: var(--accent);
+}
+.pub-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+  min-width: 0;
+}
+/* Unselected papers stay legible but recede, so the chosen set reads at a glance. */
+.pub-apa {
+  font-size: var(--t-small);
+  line-height: 1.5;
+  color: var(--muted);
+}
+.pub.on .pub-apa {
+  color: var(--ink);
+}
+.pub-meta {
+  display: flex;
+  gap: var(--s2);
+  align-items: baseline;
+  flex-wrap: wrap;
+  font-size: var(--t-micro);
+}
+.pub-status {
+  padding: 0.05rem var(--s2);
+  border-radius: 999px;
+  font-weight: 600;
+  background: var(--line);
+  color: var(--ink-soft);
+}
+.pub-status.status-published {
+  background: var(--ok-bg);
+  color: var(--ok);
+}
+.pub-status.status-under-review,
+.pub-status.status-in-principle {
+  background: var(--info-bg);
+  color: var(--info);
+}
+.pub-first {
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+.pub-warn {
+  font-size: var(--t-micro);
+  color: var(--warn);
+}
+
+/* --------------------------------------------------------------------------
+   Application questions, and how long the answers are
+
+   The counts are the point of this panel. An answer over a portal's limit is
+   truncated mid-sentence at the far end, silently, so "284 / 300" has to be
+   readable at a glance and "312 / 300" has to be impossible to miss.
+   -------------------------------------------------------------------------- */
+
+.counts {
+  list-style: none;
+  margin: 0;
+  padding: var(--s1) var(--s3) var(--s2);
+  border-top: 1px solid var(--line);
+}
+.count {
+  display: flex;
+  gap: var(--s3);
+  align-items: baseline;
+  justify-content: space-between;
+  padding: var(--s2) 0;
+  font-size: var(--t-small);
+  line-height: 1.45;
+  border-bottom: 1px solid var(--line);
+}
+.count:last-child {
+  border-bottom: none;
+}
+.count-q {
+  color: var(--ink-soft);
+  flex: 1 1 auto;
+}
+.count-n {
+  flex: none;
+  font-variant-numeric: tabular-nums;
+  color: var(--ok);
+  font-weight: 600;
+}
+.count.empty .count-q,
+.count.empty .count-n {
+  color: var(--muted);
+  font-weight: 500;
+}
+.count.over .count-n {
+  color: var(--error);
+}
+.count.over .count-n::after {
+  content: ' — will be cut';
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   15. Cold approaches
+   --------------------------------------------------------------------------
+   Everything here exists to keep one distinction visible: an advertisement
+   states its requirements, and notes about a startup do not. What the app
+   inferred must never be able to pass for what a company said.
+   ========================================================================== */
+
+.inferred-note {
+  display: flex;
+  gap: var(--s2);
+  align-items: flex-start;
+  margin: 0 0 var(--s3);
+  padding: var(--s2) var(--s3);
+  background: var(--info-bg);
+  border: 1px solid var(--info-line);
+  border-radius: var(--r-sm);
+  font-size: var(--t-small);
+  color: var(--info);
+}
+.thin-notes {
+  display: flex;
+  gap: var(--s2);
+  align-items: flex-start;
+  margin: var(--s3) 0;
+  padding: var(--s2) var(--s3);
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-line);
+  color: var(--warn);
+  border-radius: var(--r-sm);
+  font-size: var(--t-small);
+  line-height: 1.5;
+}
+.notes {
+  white-space: pre-wrap;
+  font-size: var(--t-small);
+  line-height: 1.6;
+  padding: var(--s3);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--panel-2);
+  color: var(--ink-soft);
+  max-height: 18rem;
+  overflow-y: auto;
+  max-width: none;
+}
+
+/* ==========================================================================
+   16. Checks
+   ========================================================================== */
+
+.flags {
+  margin-top: var(--s5);
+  border-top: 1px solid var(--line);
+  padding-top: var(--s4);
+}
+.flags-summary {
+  display: flex;
+  gap: var(--s2);
+  align-items: center;
+  margin-bottom: var(--s3);
+  flex-wrap: wrap;
+}
+.flag-count {
+  font-size: var(--t-micro);
+  padding: 0.15rem var(--s2);
+  border-radius: 999px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s1);
+}
+.flag-count.error {
+  background: var(--error-bg);
+  color: var(--error);
+}
+.flag-count.warning {
+  background: var(--warn-bg);
+  color: var(--warn);
+}
+.flag-count.clean {
+  background: var(--ok-bg);
+  color: var(--ok);
+}
+.flag-count.muted-count {
+  background: var(--panel-2);
+  color: var(--muted);
+  border: 1px solid var(--line);
+}
+.flags-advisory {
+  font-size: var(--t-micro);
+  color: var(--muted);
+}
+
+.flag-group {
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: var(--s3);
+  margin-bottom: var(--s2);
+  background: var(--panel-2);
+}
+.flag-group.error {
+  border-color: var(--error-line);
+  background: var(--error-bg);
+}
+.flag-group.warning {
+  border-color: var(--warn-line);
+  background: var(--warn-bg);
+}
+
+.flag-group-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s3);
+  margin-bottom: var(--s1);
+}
+.flag-group-head strong {
+  font-size: var(--t-ui);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--s2);
+}
+.flag-group.error .flag-group-head strong {
+  color: var(--error);
+}
+.flag-group.warning .flag-group-head strong {
+  color: var(--warn);
+}
+
+.flag-item {
+  font-size: var(--t-small);
+  line-height: 1.55;
+  margin-top: var(--s2);
+}
+.flag-item + .flag-item {
+  padding-top: var(--s2);
+  border-top: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+}
+.flag-item .ref {
+  display: block;
+  font: var(--t-micro) / 1.5 var(--mono);
+  color: var(--muted);
+  margin-top: 0.1rem;
+  word-break: break-all;
+}
+
+/* The sentence every finding in the group ended with, hoisted out of all of
+   them. Set apart so it reads as one instruction rather than as another thing
+   to check. */
+.flag-advice {
+  margin: var(--s3) 0 0;
+  padding-top: var(--s2);
+  border-top: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+  font-size: var(--t-small);
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+/* One row per term: the same name in eight bullets is one decision, not eight. */
+.term-list {
+  list-style: none;
+  margin: var(--s2) 0 0;
+  padding: 0;
+}
+.term-list li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s2);
+  flex-wrap: wrap;
+  padding: var(--s2) 0;
+  font-size: var(--t-small);
+  border-top: 1px solid var(--line);
+}
+.term-list li:first-child {
+  border-top: none;
+}
+.term-name {
+  font-weight: 600;
+  color: var(--ink);
+}
+.term-count {
+  font-size: var(--t-micro);
+  color: var(--muted);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.02rem var(--s2);
+}
+.term-arrow {
+  color: var(--muted);
+}
+.term-plain {
+  color: var(--ink-soft);
+  flex: 1;
+  min-width: 12rem;
+}
+
+/* ==========================================================================
+   17. Thinking, and generation progress
+
+   The indicator is the terminal one: a mark that turns, a word, and a seconds
+   counter. No progress bar anywhere — the writing step is most of the wait and
+   its length cannot be known, so a bar would stall at 90% and stop being
+   believed. The mark turns in CSS rather than JavaScript so it costs no renders
+   and cannot drift out of step with one.
+   ========================================================================== */
+
+.thinking {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  white-space: nowrap;
+}
+.thinking-mark {
+  color: var(--accent);
+}
+.button .thinking-mark,
+.button.primary .thinking-mark {
+  color: currentColor;
+}
+.thinking-mark-spin {
+  transform-origin: 12px 12px;
+  animation: mark-turn 1.6s steps(8, end) infinite;
+}
+@keyframes mark-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.thinking-word {
+  color: var(--ink-soft);
+}
+.thinking-time {
+  font: var(--t-micro) var(--mono);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.progress {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+  min-height: 2.4rem;
+  padding: var(--s1) var(--s3);
+  margin-bottom: var(--s3);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--panel-2);
+  animation: reveal var(--mid) var(--ease);
+  transition: opacity 400ms var(--ease);
+}
+.progress-done {
+  opacity: 0;
+}
+.progress-failed {
+  opacity: 1;
+  border-color: var(--error-line);
+  background: var(--error-bg);
+}
+.progress-steps {
+  display: flex;
+  gap: var(--s1);
+  align-items: center;
+  flex-wrap: wrap;
+}
+.progress-step {
+  font-size: var(--t-micro);
+  color: var(--muted);
+  padding: 0.1rem var(--s2);
+  border-radius: 999px;
+  border: 1px solid transparent;
+  transition:
+    color var(--fast) var(--ease),
+    background var(--fast) var(--ease);
+}
+.progress-step.done {
+  color: var(--ok);
+}
+.progress-step.now {
+  color: var(--ink);
+  background: var(--accent-soft);
+  font-weight: 600;
+}
+.progress-line {
+  display: flex;
+  gap: var(--s3);
+  align-items: center;
+  white-space: nowrap;
+}
+.progress-now {
+  font-size: var(--t-small);
+  color: var(--ink-soft);
+}
+.progress-failed .progress-now {
+  color: var(--error);
+  white-space: normal;
+}
+.progress-time {
+  font: var(--t-micro) var(--mono);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================================
+   18. The conversation drawer
+
+   Slides over the document rather than opening a second window: the thing
+   being discussed is the draft, and a separate window would put it on another
+   screen with its own copy of the state to keep in step.
+
+   Every animation here is transform and opacity only. Those are the two things
+   a browser can animate without laying the page out again, which is what keeps
+   a panel this size from stuttering as it opens over a long document.
+   ========================================================================== */
+
+.chat-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: color-mix(in srgb, var(--ink) 32%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--mid) var(--ease);
+}
+.chat-scrim.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.chat {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 41;
+  width: min(30rem, 100vw);
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  border-left: 1px solid var(--line);
+  box-shadow: var(--shadow-over);
+  transform: translateX(100%);
+  transition: transform var(--slow) var(--ease);
+}
+.chat.open {
+  transform: none;
+}
+/* Nothing inside a closed drawer is reachable by tab or by screen reader. */
+.chat[aria-hidden='true'] {
+  visibility: hidden;
+  transition:
+    transform var(--slow) var(--ease),
+    visibility 0s var(--slow);
+}
+.chat.open[aria-hidden='false'] {
+  visibility: visible;
+  transition: transform var(--slow) var(--ease);
+}
+
+.chat-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  padding: var(--s3) var(--s4);
+  border-bottom: 1px solid var(--line);
+  flex: none;
+}
+.chat-title {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  min-width: 0;
+}
+.chat-title strong {
+  display: block;
+  font-size: var(--t-ui);
+  font-weight: 600;
+}
+.chat-sub {
+  display: block;
+  font-size: var(--t-micro);
+  color: var(--muted);
+}
+/* A quiet mark rather than a logo: it says "this is the model's space" without
+   borrowing anyone's brand. Same figure as the thinking indicator. */
+.chat-mark {
+  width: 2rem;
+  height: 2rem;
+  flex: none;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+}
+:root[data-theme='dark'] .chat-mark {
+  color: var(--ink);
+}
+.chat-mark .thinking-mark-spin {
+  animation: none;
+}
+.chat-head-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  flex: none;
+}
+
+.chat-log {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--s4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+  scroll-behavior: smooth;
+}
+/* Conversations sit at the BOTTOM of the panel, against the box you type in.
+   Anchored to the top instead, an empty chat put its opening lines against the
+   header with the whole height of the screen between them and the text box —
+   which reads as a bug, because nothing explains the gap.
+
+   margin-top on the first child rather than justify-content: flex-end. They look
+   the same until the conversation is longer than the panel, at which point
+   flex-end pushes the overflow out of the top of the scroller where it cannot be
+   scrolled back to. `auto` margin only ever absorbs space that is spare. */
+.chat-log > :first-child {
+  margin-top: auto;
+}
+
+.chat-empty {
+  color: var(--ink-soft);
+  font-size: var(--t-ui);
+  line-height: 1.6;
+}
+.chat-examples {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  margin-top: var(--s3);
+}
+.chat-example {
+  text-align: left;
+  justify-content: flex-start;
+  font-size: var(--t-small);
+  font-weight: 400;
+  color: var(--ink-soft);
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  padding: var(--s2) var(--s3);
+  min-height: 2.5rem;
+  border-radius: var(--r);
+  white-space: normal;
+}
+.chat-example:hover:not(:disabled) {
+  border-color: var(--line-strong);
+  background: var(--panel);
+}
+
+/* Turns are asymmetric on purpose. Your messages are bubbles, because they are
+   short and addressed to someone. The model's are not: a reply can carry
+   headings, lists and a changelog, and wrapping that in a speech bubble makes a
+   document look like a text message. So the model gets the full width. */
+.turn {
+  display: flex;
+  flex-direction: column;
+  animation: turn-in var(--slow) var(--ease) both;
+}
+.turn.mine {
+  align-items: flex-end;
+}
+@keyframes turn-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.bubble {
+  max-width: 85%;
+  padding: var(--s2) var(--s3);
+  border-radius: var(--r-lg) var(--r-lg) var(--r-sm) var(--r-lg);
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: var(--t-ui);
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.turn.pending .bubble {
+  opacity: 0.6;
+}
+.turn.failed .bubble {
+  background: var(--error-bg);
+  color: var(--error);
+  border: 1px solid var(--error-line);
+}
+.turn-abandoned {
+  font-size: var(--t-micro);
+  color: var(--muted);
+  margin-top: var(--s1);
+  text-align: right;
+}
+/* The passage the question was about, kept with the question. Quietly styled and
+   above the bubble rather than inside it: it is what you pointed at, not what
+   you said, and a quote inside an accent-coloured bubble reads as your words. */
+.turn-quote {
+  max-width: 85%;
+  margin: 0 0 var(--s1);
+  padding: var(--s1) var(--s3);
+  border-left: 2px solid var(--line-strong);
+  font-size: var(--t-small);
+  line-height: 1.5;
+  color: var(--muted);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+/* Only on Edit turns. An "Ask" tag on every other turn would be noise, but which
+   messages were allowed to rewrite the document is worth being able to see. */
+.turn-mode {
+  font-size: var(--t-micro);
+  color: var(--muted);
+  margin-top: var(--s1);
+  text-align: right;
+}
+
+/* The model's side: an indent instead of a bubble, so long replies read as
+   prose rather than as an oversized chat balloon. */
+.answer {
+  padding-left: var(--s3);
+  border-left: 1px solid var(--line);
+  font-size: var(--t-ui);
+  line-height: 1.62;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.turn.failed .answer {
+  border-left-color: var(--error-line);
+  color: var(--error);
+}
+.answer-thinking {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  flex-wrap: wrap;
+}
+.chat-deadline {
+  font-size: var(--t-micro);
+  color: var(--muted);
+}
+
+/* Headings inside a reply, kept small — this is a side panel, not an article.
+   The hierarchy has to be visible without any level shouting. */
+.answer-body > :first-child {
+  margin-top: 0;
+}
+.answer-body > :last-child {
+  margin-bottom: 0;
+}
+.answer-body p {
+  margin: 0 0 var(--s3);
+  max-width: none;
+}
+.answer-body h1,
+.answer-body h2,
+.answer-body h3,
+.answer-body h4 {
+  font-family: var(--font);
+  font-size: var(--t-ui);
+  line-height: 1.35;
+  margin: var(--s3) 0 var(--s1);
+  color: var(--ink);
+  font-weight: 600;
+}
+.answer-body h1 {
+  font-size: var(--t-lead);
+}
+.answer-body ul,
+.answer-body ol {
+  margin: 0 0 var(--s3);
+  padding-left: var(--s4);
+}
+.answer-body li {
+  margin-bottom: var(--s1);
+}
+.answer-body li::marker {
+  color: var(--muted);
+}
+.answer-body code {
+  font-size: 0.88em;
+}
+.answer-body pre {
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: var(--s3);
+  overflow-x: auto;
+  margin: 0 0 var(--s3);
+}
+.answer-body pre code {
+  border: none;
+  background: none;
+  padding: 0;
+}
+.answer-body blockquote {
+  margin: 0 0 var(--s3);
+  padding-left: var(--s3);
+  border-left: 1px solid var(--line-strong);
+  color: var(--ink-soft);
+}
+.answer-body hr {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: var(--s3) 0;
+}
+.answer-body table {
+  border-collapse: collapse;
+  font-size: var(--t-small);
+  margin-bottom: var(--s3);
+  display: block;
+  overflow-x: auto;
+}
+.answer-body th,
+.answer-body td {
+  border: 1px solid var(--line);
+  padding: var(--s1) var(--s2);
+  text-align: left;
+}
+
+/* What it did, and what it would not do. */
+.answer-note {
+  margin-top: var(--s3);
+  padding-top: var(--s2);
+  border-top: 1px solid var(--line);
+  font-size: var(--t-small);
+}
+.answer-note.revised {
+  color: var(--ok);
+}
+.answer-note.declined {
+  color: var(--warn);
+}
+.answer-list {
+  margin: var(--s1) 0 0;
+  padding-left: var(--s4);
+  font-size: var(--t-small);
+  color: var(--ink-soft);
+}
+.answer-list li {
+  margin-bottom: 0.15rem;
+}
+
+/* Above the reply, not below it. The model writes "I have updated the summary
+   to…" in a mode where it cannot update anything, and by the time you have read
+   that sentence you believe it — so the correction has to arrive first. */
+.answer-warning {
+  margin-bottom: var(--s2);
+  padding: var(--s2) var(--s3);
+  border-radius: var(--r-sm);
+  background: var(--warn-bg);
+  border: 1px solid var(--warn);
+  color: var(--warn);
+  font-size: var(--t-small);
+  line-height: 1.5;
+}
+
+/* The version it wrote anyway, offered rather than applied. */
+.proposal {
+  margin-top: var(--s3);
+  padding: var(--s3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r);
+  background: var(--panel-2);
+}
+.proposal-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s2);
+  font-size: var(--t-small);
+}
+.proposal-sub {
+  color: var(--muted);
+  font-size: var(--t-micro);
+}
+.proposal-body {
+  margin-top: var(--s2);
+}
+.proposal-body summary {
+  cursor: pointer;
+  font-size: var(--t-micro);
+  color: var(--accent);
+}
+.proposal-body pre {
+  margin: var(--s2) 0 0;
+  max-height: 22rem;
+  overflow: auto;
+  padding: var(--s2);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  font: var(--t-micro) / 1.55 var(--mono);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.proposal-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  margin-top: var(--s3);
+  flex-wrap: wrap;
+}
+.proposal-foot {
+  margin: var(--s2) 0 0;
+  font-size: var(--t-micro);
+  color: var(--muted);
+  max-width: none;
+}
+
+/* The page is newer than the process answering it. Loud on purpose: everything
+   the chat promises about Ask is untrue against a server that predates it. */
+.chat-stale {
+  margin-bottom: var(--s2);
+  padding: var(--s2) var(--s3);
+  border-radius: var(--r-sm);
+  background: var(--error-bg);
+  border: 1px solid var(--error-line);
+  color: var(--error);
+  font-size: var(--t-small);
+  line-height: 1.5;
+}
+.chat-stale code {
+  font-size: 0.95em;
+}
+
+/* ==========================================================================
+   18b. Your profile, beside the draft
+   --------------------------------------------------------------------------
+   The mirror image of the chat, on the left, and open at the same time on
+   purpose: records on one side, the model on the other, the draft between them.
+   No scrim — this is a reference panel, not a dialog, and dimming the very
+   document you opened it to compare against would be self-defeating.
+   ========================================================================== */
+
+.profile-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 41;
+  width: min(26rem, 100vw);
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  border-right: 1px solid var(--line);
+  box-shadow: var(--shadow-over);
+  transform: translateX(-100%);
+  transition: transform var(--slow) var(--ease);
+}
+.profile-drawer.open {
+  transform: none;
+}
+.profile-drawer[aria-hidden='true'] {
+  visibility: hidden;
+  transition:
+    transform var(--slow) var(--ease),
+    visibility 0s var(--slow);
+}
+.profile-drawer.open[aria-hidden='false'] {
+  visibility: visible;
+  transition: transform var(--slow) var(--ease);
+}
+
+.profile-drawer-tools {
+  flex: none;
+  padding: var(--s3) var(--s4);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+.profile-drawer-tools .record-search {
+  width: 100%;
+}
+.profile-drawer-tools .segmented {
+  align-self: flex-start;
+}
+
+.profile-drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--s4);
+}
+
+.drawer-group + .drawer-group {
+  margin-top: var(--s4);
+}
+.drawer-group h3 {
+  margin: 0 0 var(--s2);
+  font-size: var(--t-micro);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.drawer-count {
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.drawer-records {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+}
+.drawer-record {
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--panel);
+}
+/* A record already in the draft is quieter, not louder. The list exists to show
+   you what is MISSING; the ones that are in are context, and marking them up in
+   green would make the answer the least visible thing on screen. */
+.drawer-record.used {
+  background: var(--panel-2);
+  border-color: transparent;
+}
+.drawer-record-head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s2);
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: var(--s2) var(--s3);
+  min-height: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  border-radius: var(--r-sm);
+}
+.drawer-record-head:hover {
+  background: var(--panel-2);
+}
+.drawer-record.used .drawer-record-head:hover {
+  background: var(--line);
+}
+.drawer-mark {
+  flex: none;
+  width: 1.1em;
+  padding-top: 0.15em;
+  color: var(--ok);
+}
+.drawer-what {
+  min-width: 0;
+  flex: 1;
+}
+.drawer-what .record-title {
+  display: block;
+  font-size: var(--t-small);
+  font-weight: 600;
+  line-height: 1.35;
+}
+.drawer-what .record-org {
+  display: block;
+  font-size: var(--t-micro);
+  color: var(--ink-soft);
+}
+.drawer-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+  margin-top: 0.15rem;
+  font-size: var(--t-micro);
+  color: var(--muted);
+}
+.drawer-dates {
+  white-space: nowrap;
+}
+
+.drawer-record-body {
+  padding: 0 var(--s3) var(--s3) calc(var(--s3) + 1.1em + var(--s2));
+}
+.drawer-record-body pre {
+  margin: 0;
+  padding: var(--s2);
+  background: var(--panel-2);
+  border-radius: var(--r-sm);
+  font: var(--t-micro) / 1.6 var(--mono);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 18rem;
+  overflow: auto;
+}
+.drawer-record.used .drawer-record-body pre {
+  background: var(--panel);
+}
+.drawer-citation {
+  margin: 0 0 var(--s2);
+  font-size: var(--t-micro);
+  color: var(--ink-soft);
+  max-width: none;
+}
+.drawer-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s1);
+  margin: var(--s2) 0 0;
+  max-width: none;
+}
+.drawer-record-body .button.small {
+  margin-top: var(--s2);
+}
+.drawer-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2em;
+}
+.drawer-legend .icon {
+  color: var(--ok);
+}
+
+/* Below this the two panels would be stacked on top of each other, so the one
+   you opened last wins and covers the whole screen. */
+@media (max-width: 34rem) {
+  .profile-drawer {
+    width: 100vw;
+    border-right: none;
+  }
+}
+
+.chat-error {
+  padding: var(--s2) var(--s3);
+  border-radius: var(--r-sm);
+  font-size: var(--t-small);
+  background: var(--error-bg);
+  border: 1px solid var(--error-line);
+  color: var(--error);
+}
+
+.chat-composer {
+  flex: none;
+  border-top: 1px solid var(--line);
+  padding: var(--s3) var(--s4) 0;
+}
+.chat-compose {
+  display: flex;
+  gap: var(--s2);
+  align-items: flex-end;
+}
+
+/* The passage you highlighted, above the box you type in — the same shape the
+   question takes once it is sent, so pinning one is not a surprise later.
+
+   Clamped to three lines: a quote is a pointer to a passage, and letting a
+   half-page selection push the text box off the bottom of the panel defeats the
+   purpose of quoting it. */
+.chat-quote {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s2);
+  margin-bottom: var(--s2);
+  padding: var(--s2) var(--s2) var(--s2) var(--s3);
+  background: var(--panel-2);
+  border-radius: var(--r-sm);
+}
+.chat-quote blockquote {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding-left: var(--s3);
+  border-left: 2px solid var(--line-strong);
+  font-size: var(--t-small);
+  line-height: 1.5;
+  color: var(--ink-soft);
+  white-space: pre-wrap;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+.chat-quote-drop {
+  flex: none;
+  width: 1.75rem;
+  height: 1.75rem;
+  min-height: 0;
+  padding: 0;
+  border-radius: var(--r-sm);
+  color: var(--muted);
+}
+
+.chat-tools {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  padding: var(--s2) 0 0;
+  min-height: 2.25rem;
+}
+
+/* Two states, one switch. The pressed one is filled because you need to know
+   which it is at a glance — this control decides whether the next thing you type
+   can rewrite the document. */
+.segmented {
+  display: flex;
+  flex: none;
+  padding: 2px;
+  gap: 2px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+}
+.segment {
+  border: none;
+  background: none;
+  border-radius: calc(var(--r) - 3px);
+  padding: 0.2rem var(--s3);
+  min-height: 0;
+  font: inherit;
+  font-size: var(--t-micro);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--muted);
+  cursor: pointer;
+  transition:
+    background var(--fast) var(--ease),
+    color var(--fast) var(--ease);
+}
+.segment:hover:not(:disabled):not(.on) {
+  color: var(--ink);
+}
+.segment.on {
+  background: var(--panel);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+}
+.segment:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.chat-quote-add {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s1);
+  border: none;
+  background: none;
+  padding: 0.2rem 0;
+  min-height: 0;
+  font: inherit;
+  font-size: var(--t-micro);
+  color: var(--accent);
+  cursor: pointer;
+  text-align: left;
+}
+.chat-quote-add:hover:not(:disabled) {
+  text-decoration: underline;
+}
+.chat-quote-add:disabled {
+  cursor: default;
+  color: var(--muted);
+}
+textarea.chat-input {
+  flex: 1;
+  resize: none;
+  overflow-y: auto;
+  font: var(--t-ui) / 1.5 var(--font);
+  padding: var(--s2) var(--s3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-lg);
+  background: var(--panel);
+  color: var(--ink);
+  min-height: var(--tap);
+}
+.chat-send {
+  flex: none;
+  width: var(--tap);
+  height: var(--tap);
+  min-height: var(--tap);
+  padding: 0;
+  border-radius: 50%;
+}
+.chat-foot {
+  padding: 0 var(--s4) var(--s3);
+  flex: none;
+  font-size: var(--t-micro);
+  color: var(--muted);
+  margin: 0;
+  max-width: none;
+}
+
+/* ==========================================================================
+   19. Forms
+   ========================================================================== */
+
+label {
+  display: block;
+  margin-bottom: var(--s2);
+  font-size: var(--t-ui);
+}
+select,
+input[type='text'],
+input[type='date'] {
+  font: inherit;
+  font-size: var(--t-ui);
+  padding: var(--s2) var(--s3);
+  min-height: var(--tap);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  background: var(--panel);
+  color: var(--ink);
+  max-width: 100%;
+}
+select:focus-visible,
+input:focus-visible {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+/* ==========================================================================
+   20. Contact links in the preview — icon plus readable label
+   --------------------------------------------------------------------------
+   The icon is drawn from the href, so the markdown stays clean and editable and
+   the visible label is still real text an applicant tracking system can read.
+   Drawn as a mask filled with currentColor, so it follows the text colour and
+   works unchanged in dark mode and in print.
+   ========================================================================== */
+
+.doc-preview a[href*='github.com']::before,
+.doc-preview a[href*='linkedin.com']::before,
+.doc-preview a[href*='scholar.google']::before {
+  content: '';
+  display: inline-block;
+  width: 0.95em;
+  height: 0.95em;
+  margin-right: 0.3em;
+  vertical-align: -0.12em;
+  background-color: currentColor;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+.doc-preview a[href*='github.com']::before {
+  -webkit-mask-image: var(--icon-github);
+  mask-image: var(--icon-github);
+}
+.doc-preview a[href*='linkedin.com']::before {
+  -webkit-mask-image: var(--icon-linkedin);
+  mask-image: var(--icon-linkedin);
+}
+.doc-preview a[href*='scholar.google']::before {
+  -webkit-mask-image: var(--icon-scholar);
+  mask-image: var(--icon-scholar);
+}
+
+:root {
+  --icon-github: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12'/%3E%3C/svg%3E");
+  --icon-linkedin: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z'/%3E%3C/svg%3E");
+  --icon-scholar: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5.242 13.769 0 9.5 12 0l12 9.5-5.242 4.269C17.548 11.249 14.978 9.5 12 9.5c-2.977 0-5.548 1.748-6.758 4.269zM12 10a7 7 0 1 0 0 14 7 7 0 0 0 0-14z'/%3E%3C/svg%3E");
+}
+
+/* Live markdown preview, so you can see the shape without opening the print view */
+.doc-preview {
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: var(--s5);
+  background: var(--panel-2);
+  font-size: var(--t-ui);
+  max-height: 34rem;
+  overflow-y: auto;
+}
+.doc-preview h2 {
+  font-size: var(--t-lead);
+  margin-top: var(--s5);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: var(--s1);
+}
+.doc-preview h3 {
+  font-size: var(--t-ui);
+  margin: var(--s3) 0 var(--s1);
+}
+.doc-preview ul {
+  margin: var(--s1) 0 var(--s3);
+  padding-left: var(--s4);
+}
+
+/* ==========================================================================
+   21. Responsive
+   ========================================================================== */
+
+/* The chat gets its own width rather than covering the page: you are discussing
+   the draft, so hiding it behind the discussion is the one thing this panel
+   should not do. Below this there is no room to share, so it goes back to being
+   a modal over the top, with the scrim.
+
+   The page moves on transform, not margin — margin is a layout property, and
+   animating it reflowed the whole document on every frame of the slide.
+
+   118rem, not the 78rem this used to say, and the number is not a taste
+   judgement: the page is 88rem wide and the drawer 30rem, so below 118rem there
+   is no room for both. What actually happened at 1280–1600px was that the page
+   slid 15rem off the left edge of the window — clipped, unscrollable, because
+   this block also hides the overflow — and its right-hand side stayed under the
+   drawer anyway. It made room by throwing content away. Under 118rem the drawer
+   now overlays with a scrim, which is honest about covering the page and can be
+   dismissed by clicking it. */
+@media (min-width: 118rem) {
+  body.chat-open .page,
+  body.chat-open .app-header {
+    transform: translateX(-15rem);
+    transition: transform var(--slow) var(--ease);
+  }
+  .page,
+  .app-header {
+    transition: transform var(--slow) var(--ease);
+  }
+  body.chat-open {
+    overflow-x: hidden;
+  }
+  .chat-scrim {
+    display: none;
+  }
+}
+
+@media (max-width: 75rem) {
+  .split {
+    grid-template-columns: 1fr;
+  }
+  .board {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 56rem) {
+  .rail-track {
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
+    gap: 0;
+  }
+  .rail-button {
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+    gap: var(--s3);
+    padding: var(--s2) var(--s3);
+    width: 100%;
+  }
+  .rail-text {
+    flex-direction: row;
+    align-items: baseline;
+    gap: var(--s2);
+    flex-wrap: wrap;
+  }
+  /* The connector runs down the column instead of across the row. */
+  .rail-step::after,
+  .rail-step::before {
+    top: calc(var(--s2) + 1.8rem);
+    bottom: -2px;
+    left: calc(var(--s3) + 0.9rem);
+    right: auto;
+    width: 1px;
+    height: auto;
+  }
+  .rail-step::before {
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform var(--slow) var(--ease);
+  }
+  .rail-step.is-done::before {
+    transform: scaleY(1);
+  }
+}
+
+@media (max-width: 48rem) {
+  .page {
+    padding: var(--s4) var(--s4) var(--s7);
+  }
+  .app-header {
+    padding: var(--s3) var(--s4);
+    gap: var(--s3);
+  }
+  .board {
+    grid-template-columns: 1fr;
+    gap: var(--s5);
+  }
+  h1 {
+    font-size: 1.5rem;
+  }
+  .score-number {
+    font-size: 2.5rem;
+  }
+  .facts li {
+    flex-direction: column;
+    gap: 0;
+  }
+  .facts li > span:first-child {
+    flex-basis: auto;
+    font-size: var(--t-micro);
+  }
+  .req-list li {
+    flex-direction: column;
+    gap: var(--s1);
+  }
+  .req-list .chip {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 34rem) {
+  .brand-meta {
+    display: none;
+  }
+  /* The header already carries "Add job" on a narrow screen, and two of the
+     same button stacked one above the other reads as two different actions. */
+  .page-head > .button {
+    display: none;
+  }
+  .chat {
+    width: 100vw;
+    border-left: none;
+  }
+  .panel {
+    padding: var(--s4);
+  }
+}
+
+/* ==========================================================================
+   22. Reduced motion
+   --------------------------------------------------------------------------
+   Not a blanket 0.01ms kill. That used to override every considered
+   alternative below it and took the state change away with the movement —
+   which is the opposite of what the request means. What goes is travel,
+   looping and anything that turns; what stays is the change of state, and
+   fades short enough not to be motion.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .thinking-mark-spin,
+  .editor-veil::after,
+  .panel.called {
+    animation: none;
+  }
+  .rail-step::before {
+    transition: none;
+  }
+  .card:hover {
+    transform: none;
+  }
+  .rail-step.is-now .rail-mark {
+    transform: none;
+  }
+  .backlink:hover .icon,
+  .card-next:hover .icon {
+    transform: none;
+  }
+  .chat-log {
+    scroll-behavior: auto;
+  }
+  .turn,
+  .progress,
+  .history-bar,
+  .pubs-applied,
+  .disclosure-body,
+  .profile-reason,
+  .editor-veil {
+    animation-duration: 1ms;
+  }
+  /* The drawer still needs to arrive from somewhere, or it appears with no
+     relationship to the button that opened it — so it fades instead of slides. */
+  .chat,
+  .chat-scrim,
+  .page,
+  .app-header {
+    transition-duration: 1ms;
+  }
+}
+
+/* ===========================================================================
+   Setting yourself up, and editing your own record
+   ===========================================================================
+
+   These screens came later than the rest of the app and serve a different
+   moment: the first ten minutes, before anything works, when every unexplained
+   control is a reason to close the tab. So they are wordier than the job
+   screens on purpose — a hint under a field costs a line and saves a search
+   through a README.
+
+   They reuse the tokens above and add no new colours. */
+
+/* --- shared form furniture ------------------------------------------------ */
+
+.input {
+  width: 100%;
+  padding: var(--s2) var(--s3);
+  font: inherit;
+  font-size: var(--t-body);
+  color: var(--ink);
+  background: var(--panel);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+}
+.input.mono {
+  font-family: var(--mono);
+  font-size: var(--t-ui);
+}
+.input.narrow {
+  max-width: 12rem;
+}
+.input.wide {
+  flex: 1 1 24rem;
+}
+textarea.input {
+  resize: vertical;
+  min-height: 4.5rem;
+  line-height: 1.5;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+  margin-block: var(--s4);
+  border: 0;
+  padding: 0;
+}
+.field-hint {
+  font-size: var(--t-small);
+  color: var(--muted);
+  max-width: var(--measure);
+}
+.field.checkbox {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--s2);
+}
+.field.checkbox input {
+  margin-top: 0.2em;
+  flex: none;
+}
+.field.checkbox span {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+}
+.field.checkbox.inline {
+  margin-block: 0;
+  align-items: center;
+}
+
+.field-grid {
+  display: grid;
+  gap: var(--s2) var(--s4);
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  margin-block: var(--s3);
+}
+.row.wrap {
+  flex-wrap: wrap;
+}
+.saved-tick {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s1);
+  color: var(--ok);
+  font-size: var(--t-ui);
+}
+.link-button.danger {
+  color: var(--error);
+}
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  min-height: 2rem;
+  padding: 0;
+  color: var(--muted);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+}
+.icon-button:hover:not(:disabled) {
+  color: var(--ink);
+  border-color: var(--line-strong);
+}
+.icon-button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.icon-button.rotated svg {
+  transform: rotate(180deg);
+}
+.icon-button.tiny {
+  min-width: 1.25rem;
+  min-height: 1.25rem;
+}
+
+.page-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s4);
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--s5);
+}
+.page-head h1 {
+  font-family: var(--display);
+  font-size: var(--t-display);
+  margin: 0;
+}
+.page-head p {
+  margin: var(--s1) 0 0;
+  max-width: var(--measure);
+}
+
+/* --- header navigation ---------------------------------------------------- */
+
+.nav-links {
+  display: flex;
+  gap: var(--s1);
+}
+.nav-link {
+  padding: var(--s1) var(--s2);
+  font-size: var(--t-ui);
+  color: var(--muted);
+  text-decoration: none;
+  border-radius: var(--r-sm);
+  white-space: nowrap;
+}
+.nav-link:hover {
+  color: var(--ink);
+  background: var(--panel-2);
+}
+.nav-link.active {
+  color: var(--ink);
+  font-weight: 600;
+  background: var(--accent-soft);
+}
+@media (max-width: 60rem) {
+  .nav-links {
+    order: 10;
+    width: 100%;
+    overflow-x: auto;
+  }
+}
+
+/* --- the welcome screen --------------------------------------------------- */
+
+.welcome {
+  max-width: 52rem;
+}
+.welcome-hero h1 {
+  font-family: var(--mono);
+  font-size: var(--t-display);
+  margin: 0 0 var(--s3);
+}
+.lede {
+  font-size: var(--t-lead);
+  line-height: 1.6;
+  max-width: var(--measure);
+}
+.lede-sub {
+  color: var(--muted);
+  max-width: var(--measure);
+}
+
+.setup-step {
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background: var(--panel);
+  margin-block: var(--s3);
+  overflow: hidden;
+}
+.setup-step.is-done {
+  background: var(--panel-2);
+}
+.setup-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  width: 100%;
+  padding: var(--s3) var(--s4);
+  text-align: left;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+.setup-n {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  font-size: var(--t-ui);
+  font-weight: 600;
+  color: var(--on-accent);
+  background: var(--accent);
+}
+.is-done .setup-n {
+  background: var(--ok);
+}
+.setup-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.setup-summary {
+  font-size: var(--t-small);
+  color: var(--muted);
+}
+.setup-body {
+  padding: 0 var(--s4) var(--s4);
+  border-top: 1px solid var(--line);
+}
+.setup-body > p:first-child {
+  margin-top: var(--s4);
+}
+
+.check-list {
+  list-style: none;
+  margin: var(--s3) 0;
+  padding: 0;
+}
+.check {
+  display: flex;
+  gap: var(--s2);
+  padding: var(--s2) 0;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--t-ui);
+}
+.check-mark {
+  flex: none;
+  width: 1.25rem;
+  font-weight: 700;
+  text-align: center;
+}
+.check.ok .check-mark {
+  color: var(--ok);
+}
+.check.warn .check-mark {
+  color: var(--warn);
+}
+.check.fail .check-mark {
+  color: var(--error);
+}
+.check-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.provider-choice {
+  display: grid;
+  gap: var(--s3);
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  margin-block: var(--s4);
+}
+.provider-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--s1) var(--s2);
+  padding: var(--s3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r);
+  cursor: pointer;
+}
+.provider-card.chosen {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.provider-name {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  font-weight: 600;
+}
+.provider-blurb {
+  grid-column: 2;
+  font-size: var(--t-small);
+  color: var(--muted);
+}
+.pill {
+  display: inline-block;
+  padding: 1px var(--s2);
+  font-size: var(--t-micro);
+  border-radius: 999px;
+  background: var(--panel-2);
+  border: 1px solid var(--line-strong);
+  color: var(--muted);
+}
+.pill.free {
+  color: var(--ok);
+  background: var(--ok-bg);
+  border-color: var(--ok-line);
+}
+.pill.warn {
+  color: var(--warn);
+  background: var(--warn-bg);
+  border-color: var(--warn-line);
+}
+
+.tour {
+  margin-top: var(--s7);
+  padding-top: var(--s5);
+  border-top: 1px solid var(--line);
+}
+.tour h2 {
+  font-family: var(--display);
+  font-size: var(--t-title);
+}
+.tour-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--s3);
+}
+.tour-list li {
+  display: flex;
+  gap: var(--s3);
+  max-width: var(--measure);
+}
+.tour-n {
+  flex: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: var(--t-micro);
+  font-weight: 600;
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+
+/* --- the profile editor --------------------------------------------------- */
+
+.record-group {
+  margin-block: var(--s5);
+}
+.record-group h2 {
+  margin: 0;
+}
+.group-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  width: 100%;
+  padding: var(--s2) 0;
+  font-family: var(--display);
+  font-size: var(--t-title);
+  color: inherit;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+  text-align: left;
+}
+.group-toggle .count {
+  margin-left: auto;
+  font-family: var(--font);
+  font-size: var(--t-micro);
+  color: var(--muted);
+}
+.group-hint {
+  font-size: var(--t-small);
+  color: var(--muted);
+  max-width: var(--measure);
+}
+.record-list {
+  list-style: none;
+  margin: 0 0 var(--s2);
+  padding: 0;
+}
+.record-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  border-bottom: 1px solid var(--line);
+}
+.record-main,
+.citation-main,
+.setup-head,
+.group-toggle {
+  /* These are buttons wrapped around running text rather than buttons with a
+     label on them, so the shared button reset — centre-aligned, never wrapping —
+     is exactly wrong for them and has to be undone by name. */
+  align-items: flex-start;
+  white-space: normal;
+}
+.setup-head,
+.group-toggle {
+  align-items: center;
+}
+.record-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--s2) 0;
+  text-align: left;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.record-main:hover .record-title {
+  text-decoration: underline;
+}
+.record-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s2);
+  font-size: var(--t-micro);
+  color: var(--muted);
+}
+.tag {
+  padding: 0 var(--s1);
+  border-radius: var(--r-sm);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+.confirm {
+  display: flex;
+  gap: var(--s2);
+  align-items: center;
+  font-size: var(--t-ui);
+}
+.empty {
+  font-style: italic;
+}
+
+.citation-list {
+  list-style: none;
+  padding: 0;
+}
+.citation {
+  padding: var(--s3) 0;
+  border-bottom: 1px solid var(--line);
+}
+.citation.has-problem {
+  border-left: 3px solid var(--warn);
+  padding-left: var(--s3);
+}
+.citation-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.citation-apa {
+  line-height: 1.5;
+  max-width: var(--measure);
+  /* A DOI is one unbroken token and will happily push the page sideways. */
+  overflow-wrap: anywhere;
+}
+
+.raw-editor {
+  width: 100%;
+  min-height: 28rem;
+  /* Sits beside the line-number gutter, so no rounded left edge and no border
+     on the side they meet. */
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  border-left: none;
+  resize: vertical;
+  padding: var(--s3);
+  font-family: var(--mono);
+  font-size: var(--t-ui);
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--panel);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  resize: vertical;
+}
+.problem-list {
+  margin: var(--s2) 0;
+  padding-left: var(--s4);
+  font-size: var(--t-ui);
+}
+
+.tag-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+}
+.tag-choice {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s1);
+  padding: var(--s1) var(--s2);
+  font-size: var(--t-ui);
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  cursor: pointer;
+}
+.tag-choice.chosen {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+.tag-picker.editable .tag-choice {
+  cursor: default;
+}
+
+/* --- the record dialog ---------------------------------------------------- */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: var(--s5) var(--s3);
+  overflow-y: auto;
+  background: rgba(20, 22, 28, 0.45);
+}
+.modal {
+  width: min(46rem, 100%);
+  background: var(--panel);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-over);
+  display: flex;
+  flex-direction: column;
+}
+.modal-head,
+.modal-foot {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  padding: var(--s3) var(--s4);
+}
+.modal-head {
+  border-bottom: 1px solid var(--line);
+  justify-content: space-between;
+}
+.modal-head h2 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: var(--t-title);
+}
+.modal-body {
+  padding: 0 var(--s4);
+  max-height: 70vh;
+  overflow-y: auto;
+}
+.modal-foot {
+  border-top: 1px solid var(--line);
+  justify-content: flex-end;
+}
+.body-input {
+  min-height: 9rem;
+}
+
+/* --- settings ------------------------------------------------------------- */
+
+.settings,
+.profile-editor,
+.cv-profiles,
+.cv-profile-editor {
+  max-width: 56rem;
+}
+.settings-block {
+  padding-block: var(--s5);
+  border-top: 1px solid var(--line);
+}
+.settings-block h2 {
+  margin: 0 0 var(--s2);
+  font-family: var(--display);
+  font-size: var(--t-title);
+}
+.settings-block > p.muted {
+  max-width: var(--measure);
+}
+.link-list {
+  list-style: none;
+  margin: var(--s3) 0;
+  padding: 0;
+  display: grid;
+  gap: var(--s2);
+}
+.link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+  align-items: center;
+}
+.link-row .input {
+  flex: 1 1 12rem;
+  width: auto;
+}
+.qualification {
+  padding: var(--s3);
+  margin-block: var(--s3);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background: var(--panel-2);
+}
+.country-rights {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+  margin-block: var(--s4);
+}
+.derived summary {
+  cursor: pointer;
+  font-size: var(--t-ui);
+  color: var(--muted);
+}
+.save-row {
+  padding-block: var(--s5);
+  border-top: 1px solid var(--line);
+}
+
+/* --- CV profiles ---------------------------------------------------------- */
+
+.profile-cards {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--s3);
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+}
+.profile-card a {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+  height: 100%;
+  padding: var(--s4);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background: var(--panel);
+  color: inherit;
+  text-decoration: none;
+}
+.profile-card a:hover {
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-lift);
+}
+.profile-card strong {
+  font-family: var(--mono);
+}
+.profile-card span {
+  font-size: var(--t-small);
+  color: var(--muted);
+}
+.section-order {
+  list-style: none;
+  padding: 0;
+  counter-reset: section;
+  display: grid;
+  gap: var(--s1);
+}
+.section-order li {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  padding: var(--s2) var(--s3);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--panel);
+}
+.section-order li code {
+  margin-left: auto;
+  font-size: var(--t-micro);
+  color: var(--muted);
+}
+.section-order .row {
+  margin: 0;
+  gap: var(--s1);
+}
+.danger-zone {
+  border-top-color: var(--error-line);
+}
+
+/* ===========================================================================
+   Importing a CV, and tightening the wording
+   ===========================================================================
+
+   Both screens are review screens, and the layout is the argument: the thing
+   being proposed and the thing it came from sit next to each other, because
+   neither is safe to accept without reading the other. */
+
+.modal.wide {
+  width: min(60rem, 100%);
+}
+
+.raw-editor.short {
+  min-height: 14rem;
+}
+
+.import-list,
+.polish-list,
+.ask-list {
+  list-style: none;
+  margin: var(--s3) 0;
+  padding: 0;
+  display: grid;
+  gap: var(--s2);
+}
+
+.import-row,
+.polish-row {
+  display: flex;
+  gap: var(--s3);
+  padding: var(--s3);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background: var(--panel);
+}
+
+/* Unticked is not deleted — it is still there to change your mind about, so it
+   recedes rather than disappearing. */
+.import-row.skipped,
+.polish-row.skipped {
+  opacity: 0.55;
+  background: var(--panel-2);
+}
+
+.import-row.rejected,
+.polish-row.rejected {
+  border-color: var(--error-line);
+  background: var(--error-bg);
+  opacity: 1;
+}
+
+.import-check {
+  flex: none;
+  padding-top: 2px;
+}
+
+.import-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+  min-width: 0;
+  flex: 1;
+}
+
+.import-text {
+  margin: 0;
+  line-height: 1.55;
+  max-width: var(--measure);
+}
+
+.import-text.struck {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--error-line);
+}
+
+/* The quote from the source document. Set apart and quieter than the record it
+   produced, because it is evidence rather than content. */
+.import-quote {
+  margin: var(--s1) 0 0;
+  padding-left: var(--s3);
+  border-left: 2px solid var(--line-strong);
+  color: var(--muted);
+  font-size: var(--t-small);
+  font-style: italic;
+  max-width: var(--measure);
+}
+
+/* Before and after, side by side while there is room and stacked when there is
+   not — a diff read in two columns on a phone is not read at all. */
+.polish-pair {
+  display: grid;
+  gap: var(--s3);
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  margin-block: var(--s1);
+}
+.polish-pair > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+}
+
+.ask-list li {
+  padding: var(--s2) 0;
+  border-bottom: 1px solid var(--line);
+}
+.ask-list ul {
+  margin: var(--s1) 0 0;
+  padding-left: var(--s4);
+  color: var(--muted);
+  font-size: var(--t-ui);
+}
+
+.rejected summary {
+  cursor: pointer;
+  font-size: var(--t-ui);
+  color: var(--muted);
+  padding: var(--s2) 0;
+}
+
+/* --------------------------------------------------------------------------
+   The advertisement's words
+
+   Deliberately quieter than the checks panel. A missing term is information,
+   not a fault — some of them are things you have genuinely not done, and the
+   right response there is to leave the term missing. So: no red, and the
+   percentage is a fact rather than a grade.
+   -------------------------------------------------------------------------- */
+
+.kw-score {
+  margin-left: auto; font-size: 0.75rem; font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  padding: 0.05rem 0.45rem; border-radius: 999px;
+}
+.kw-score.good { background: var(--ok-bg); color: var(--ok); }
+.kw-score.fair { background: var(--accent-soft); color: var(--accent-ink); }
+.kw-score.thin { background: var(--warn-bg); color: var(--warn); }
+.keywords .pubs-problem { margin-left: 0; }
+
+.kw-lists { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; }
+@media (max-width: 700px) { .kw-lists { grid-template-columns: 1fr; } }
+.kw-head { font-size: 0.7rem; margin: 0 0 0.35rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 650; }
+.kw-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.25rem; }
+.kw {
+  font-size: 0.75rem; padding: 0.1rem 0.45rem; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--panel);
+}
+.kw.used { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 35%, transparent); }
+.kw.missing { color: var(--muted); border-style: dashed; }
+/* A term the ad called a must-have. Weight already sorts these to the front;
+   this is what makes the front look different from the rest of the list. */
+.kw.required { font-weight: 650; }
+.kw.missing.required { color: var(--ink); border-color: var(--line-strong); }
+
+/* ==========================================================================
+   Notes, and the record picker
+
+   Both are "beside the draft, out of the way until wanted" — the same
+   disclosure the publications and questions panels use, so there is one thing
+   to learn rather than three.
+   ========================================================================== */
+
+.saved-tick {
+  margin-left: auto; display: inline-flex; align-items: center; gap: 0.25rem;
+  font-size: 0.74rem; font-weight: 600; color: var(--ok);
+  animation: pubs-applied-in var(--speed) ease-out;
+}
+
+.record-search {
+  width: 100%; font: inherit; font-size: 0.85rem;
+  padding: 0.4rem 0.6rem; margin-bottom: 0.5rem;
+  border: 1px solid var(--line-strong); border-radius: var(--r-sm);
+  background: var(--panel); color: var(--ink);
+}
+.record-search:focus { border-color: var(--accent); outline: none; }
+
+.record-list { list-style: none; margin: 0; padding: 0; max-height: 20rem; overflow-y: auto; }
+.record {
+  display: flex; gap: 0.7rem; align-items: center; justify-content: space-between;
+  padding: 0.35rem 0.1rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+}
+.record:last-child { border-bottom: none; }
+.record-what { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.4rem; min-width: 0; }
+.record-title { font-size: 0.84rem; color: var(--ink); }
+.record-org { font-size: 0.78rem; color: var(--muted); }
+/* The id is what a validator message names, so it has to be findable here. */
+.record-id { font: 0.7rem var(--mono); color: var(--muted); }
+
+/* Deleting: quiet until armed, then unmistakable. The danger colour appears
+   only on the second step, so nothing red sits on a screen being read. */
+.delete-job { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+.delete-job.armed {
+  padding: 0.45rem 0.7rem; border-radius: var(--r-sm);
+  background: var(--error-bg); border: 1px solid var(--error-line);
+  animation: pubs-applied-in var(--speed) ease-out;
+}
+.delete-what { font-size: 0.8rem; color: var(--error); }
+.link-button.danger { color: var(--muted); }
+.link-button.danger:hover { color: var(--error); }
+.button.danger {
+  background: var(--error); border-color: var(--error); color: var(--on-accent);
+}
+.button.danger:hover:not(:disabled) { filter: brightness(0.92); border-color: var(--error); }
+
+/* A card whose draft is being written right now. Deliberately calm — several of
+   these on screen at once is the normal, good state, not an alarm. */
+.badge.writing { background: var(--accent-soft); color: var(--accent-ink); border-color: transparent; }
+
+/* ==========================================================================
+   The bin
+
+   Reached from the board, and the only screen that can destroy anything. The
+   restore button is the primary action on every row; permanent deletion is a
+   quiet link that has to be armed first.
+   ========================================================================== */
+
+.trash-page { max-width: 52rem; }
+.trash-page h1 { margin: 0.4rem 0 0.5rem; }
+
+.trash-list { list-style: none; margin: 1.2rem 0 0; padding: 0; display: grid; gap: 0.6rem; }
+.trash-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; flex-wrap: wrap;
+  padding: 0.85rem 1rem; border-radius: var(--r-md, 10px);
+}
+.trash-what { display: flex; flex-direction: column; gap: 0.15rem; min-width: 14rem; flex: 1 1 20rem; }
+.trash-what strong { font-size: 0.95rem; }
+.trash-meta { font-size: 0.78rem; color: var(--muted); }
+.trash-actions { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+
+.trash-foot { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+
+/* The bin's own link in the board header — deliberately quiet, since an empty
+   bin is the normal state and a loud one would read as something to deal with. */
+.board-bin { font-size: 0.82rem; color: var(--muted); display: inline-flex; align-items: center; gap: 0.3rem; }
+.board-bin:hover { color: var(--ink); }
+.board-bin .num { font-variant-numeric: tabular-nums; }
+
+/* ==========================================================================
+   Recruiter's read
+
+   Sits under the draft, beside the keyword panel, and uses the same disclosure
+   so there is one thing to learn rather than three. The verdict is the only
+   coloured thing here: everything else is a list to work through.
+   ========================================================================== */
+
+.rec-verdict { font-weight: 650; font-size: 0.8rem; }
+.rec-interview { color: var(--ok); }
+.rec-maybe { color: #b98a2a; }
+.rec-pass { color: var(--error); }
+
+.rec-impression {
+  margin: 0.9rem 0 0.2rem; font-size: 0.95rem; line-height: 1.6;
+  padding-left: 0.85rem; border-left: 3px solid var(--line-strong);
+}
+
+.rec-head {
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--muted); font-weight: 650; margin: 1.25rem 0 0.35rem;
+}
+
+.rec-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+.rec-list > li { font-size: 0.88rem; line-height: 1.5; }
+.rec-what { display: block; }
+.rec-what svg { vertical-align: -0.15em; margin-right: 0.3rem; }
+/* The fix, not the complaint, is the part to act on — so it is the readable one
+   and the concern above it is the label. */
+.rec-fix { display: block; color: var(--muted); font-size: 0.84rem; margin-top: 0.15rem; }
+
+.rec-concern .rec-what svg { color: var(--error); }
+.rec-strength svg { color: var(--ok); }
+.rec-keyword .record-id,
+.rec-record .record-id { margin-left: 0.4rem; }
+
+.rec-dropped { margin-top: 1.25rem; border-top: 1px solid var(--line); padding-top: 0.7rem; }
+.rec-dropped summary { font-size: 0.82rem; color: var(--muted); cursor: pointer; }
+.rec-dropped summary:hover { color: var(--ink); }
+.rec-dropped .rec-list { margin-top: 0.4rem; }
+
+
+/* ==========================================================================
+   The whole file
+
+   A textarea with a line-number gutter beside it. Deliberately not a code
+   editor — no highlighting, no dependency — because the two things a long
+   structured file needs are somewhere to see line numbers and somewhere to jump
+   from, and both are plain DOM.
+   ========================================================================== */
+
+.raw-wrap { display: flex; align-items: stretch; margin: var(--s3) 0 0; }
+
+.raw-gutter {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: var(--s3) 0.5rem var(--s3) 0.7rem;
+  font-family: var(--mono);
+  font-size: var(--t-ui);
+  line-height: 1.55;
+  text-align: right;
+  color: var(--muted);
+  background: var(--panel-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm) 0 0 var(--r-sm);
+  /* Scrolled in step with the textarea by script; never by the user directly. */
+  overflow: hidden;
+  user-select: none;
+  min-width: 2.75rem;
+}
+
+.raw-foot { margin-top: var(--s2); flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+.raw-stat { font-size: 0.8rem; }
+.raw-stat .num { font-variant-numeric: tabular-nums; }
+/* Pushed to the far end, so it reads as a note rather than a control. */
+.raw-hint { font-size: 0.78rem; margin-left: auto; }
+
+/* An unsaved-changes marker on the tab itself, for when the editor is not the
+   tab you are looking at. */
+.tab-dot {
+  display: inline-block; width: 0.4rem; height: 0.4rem; border-radius: 50%;
+  background: var(--warn); margin-left: 0.4rem; vertical-align: 0.1em;
+}
+
+.outline { margin: var(--s3) 0 0; }
+.outline-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.15rem; }
+.outline-list li {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 1rem;
+  font-size: 0.86rem;
+}
+.outline-list li .muted { font-size: 0.76rem; font-variant-numeric: tabular-nums; }
+.outline-list .outline-2 { margin-top: 0.5rem; font-weight: 650; }
+.outline-list .outline-2:first-child { margin-top: 0; }
+.outline-list .outline-3 { padding-left: 1rem; }
+.outline-list .link-button { text-align: left; }

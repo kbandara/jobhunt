@@ -1,0 +1,52 @@
+{
+  "id": "industry",
+  "description": "Analyst, data science and applied technical roles in companies. Professional delivery first, research second.",
+  "targets": [
+    "data scientist",
+    "analyst",
+    "applied scientist",
+    "consultant"
+  ],
+  "evidenceProfiles": [
+    "*"
+  ],
+  "register": "general",
+  "sections": [
+    {
+      "id": "summary"
+    },
+    {
+      "id": "experience"
+    },
+    {
+      "id": "skills"
+    },
+    {
+      "id": "education"
+    },
+    {
+      "id": "publications",
+      "max": 2
+    }
+  ],
+  "lengthPages": 2,
+  "publications": {
+    "policy": "brief",
+    "count": 2,
+    "style": "one-line"
+  },
+  "clearance": "mention",
+  "techSectionName": "Technical Skills",
+  "summaryAlways": true,
+  "criteriaDoc": false,
+  "kindPriority": {
+    "role": 6,
+    "project": 5,
+    "skill": 4,
+    "education": 3,
+    "finding": 3,
+    "publication": 2,
+    "award": 1,
+    "service": 1
+  }
+}

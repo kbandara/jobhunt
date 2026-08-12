@@ -1,0 +1,61 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["verdict", "first_impression", "strengths", "concerns", "keywords_to_work_in", "records_to_add"],
+  "properties": {
+    "verdict": {
+      "type": "string",
+      "enum": ["interview", "maybe", "pass"],
+      "description": "What you would actually do with this application after reading it: interview them, put it on the maybe pile, or pass."
+    },
+    "first_impression": {
+      "type": "string",
+      "description": "What you notice in the first twenty seconds, in one or two sentences. The reader is the applicant, so say it to them plainly."
+    },
+    "strengths": {
+      "type": "array",
+      "description": "What is working, as things you would say out loud to a hiring manager. Two to four.",
+      "items": { "type": "string" }
+    },
+    "concerns": {
+      "type": "array",
+      "description": "What would make you hesitate, each with the change that would fix it. Ordered by how much it costs them.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["concern", "fix"],
+        "properties": {
+          "concern": { "type": "string", "description": "What a screener would hesitate over." },
+          "fix": { "type": "string", "description": "The specific change to the document. Not general advice." }
+        }
+      }
+    },
+    "keywords_to_work_in": {
+      "type": "array",
+      "description": "Terms the advertisement uses that this document does not, and that a record genuinely supports. Leave empty rather than reaching.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["term", "supported_by", "where"],
+        "properties": {
+          "term": { "type": "string", "description": "The advertisement's own wording for it." },
+          "supported_by": { "type": "string", "description": "The id of the evidence record that shows they did this work. Must be a real id from the list you were given." },
+          "where": { "type": "string", "description": "Which part of the document it belongs in, and what it would replace." }
+        }
+      }
+    },
+    "records_to_add": {
+      "type": "array",
+      "description": "Evidence records that would strengthen this application for THIS advertisement and are not used in the document yet. Leave empty if the document already draws on the right ones.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["record_id", "why"],
+        "properties": {
+          "record_id": { "type": "string", "description": "A real id from the records you were given." },
+          "why": { "type": "string", "description": "What this record answers in the advertisement that the document currently does not." }
+        }
+      }
+    }
+  }
+}

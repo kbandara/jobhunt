@@ -1,0 +1,189 @@
+%% atscv.sty -- single-column CV style hardened for ATS keyword parsers
+%% and LLM-based CV screeners.
+%%
+%% Options:
+%%   charter (default) | sans | times | cm   -- typeface
+%%   a4 (default) | letter                   -- paper
+%%   norule                                  -- no horizontal rule under sections
+%%   keepligatures                           -- re-enable f-ligatures (fi, fl, ffi)
+%%   compact                                 -- tighter vertical rhythm
+%%
+%% Compile with pdflatex (preferred) or lualatex. Both emit ToUnicode maps.
+%% ---------------------------------------------------------------------------
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{atscv}[2026/08/03 v1.0 Single-column parser-hardened CV]
+
+% ---- options --------------------------------------------------------------
+\newif\ifatscv@sans        \atscv@sansfalse
+\newif\ifatscv@times       \atscv@timesfalse
+\newif\ifatscv@cm          \atscv@cmfalse
+\newif\ifatscv@letter      \atscv@letterfalse
+\newif\ifatscv@rule        \atscv@ruletrue
+\newif\ifatscv@ligs        \atscv@ligsfalse
+\newif\ifatscv@compact     \atscv@compactfalse
+
+\DeclareOption{charter}{}
+\DeclareOption{sans}{\atscv@sanstrue}
+\DeclareOption{times}{\atscv@timestrue}
+\DeclareOption{cm}{\atscv@cmtrue}
+\DeclareOption{a4}{}
+\DeclareOption{letter}{\atscv@lettertrue}
+\DeclareOption{norule}{\atscv@rulefalse}
+\DeclareOption{keepligatures}{\atscv@ligstrue}
+\DeclareOption{compact}{\atscv@compacttrue}
+\DeclareOption*{\PackageWarning{atscv}{Unknown option '\CurrentOption'}}
+\ProcessOptions\relax
+
+% ---- encoding and fonts ---------------------------------------------------
+% T1 output encoding gives real 8-bit glyph slots, so accented characters and
+% punctuation survive text extraction instead of arriving as composite glyphs.
+\RequirePackage[T1]{fontenc}
+\RequirePackage[utf8]{inputenc}
+
+\ifatscv@cm\else
+  \ifatscv@sans
+    \IfFileExists{helvet.sty}{%
+      \RequirePackage[scaled=0.94]{helvet}\renewcommand{\familydefault}{\sfdefault}}{}
+  \else
+    \ifatscv@times
+      \IfFileExists{mathptmx.sty}{\RequirePackage{mathptmx}}{}
+    \else
+      \IfFileExists{charter.sty}{\RequirePackage{charter}}{}
+    \fi
+  \fi
+\fi
+
+% ---- machine readability --------------------------------------------------
+% The single most important line in this file. Without a ToUnicode CMap the
+% PDF stores glyph indices, and extractors get mojibake or nothing at all.
+% pdftex only -- lualatex writes ToUnicode maps unconditionally.
+\ifdefined\pdfgentounicode
+  \input{glyphtounicode}
+  \pdfgentounicode=1
+\fi
+
+\RequirePackage{microtype}
+\ifatscv@ligs\else
+  % Belt and braces: with ligatures off, "office" is six glyphs rather than
+  % o-f-fi-c-e, so even an extractor that ignores the ToUnicode map is safe.
+  \DisableLigatures[f]{encoding = *, family = *}
+\fi
+
+% Hyphenation is the quiet keyword killer: a line-broken "com-\nputational"
+% never matches a search for "computational". Ragged right, never hyphenate.
+\raggedright
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\tolerance=9999
+\emergencystretch=3em
+\raggedbottom
+\pagestyle{empty}
+
+% ---- geometry -------------------------------------------------------------
+\ifatscv@letter
+  \RequirePackage[letterpaper,top=1.6cm,bottom=1.6cm,left=1.8cm,right=1.8cm]{geometry}
+\else
+  \RequirePackage[a4paper,top=1.6cm,bottom=1.6cm,left=1.8cm,right=1.8cm]{geometry}
+\fi
+
+\RequirePackage{titlesec}
+\RequirePackage{enumitem}
+\RequirePackage{xcolor}
+\RequirePackage[hidelinks,unicode]{hyperref}
+\urlstyle{same}
+
+% ---- vertical rhythm ------------------------------------------------------
+\ifatscv@compact
+  \newcommand{\atscv@secskip}{1.6ex}
+  \newcommand{\atscv@entryskip}{0.7ex}
+\else
+  \newcommand{\atscv@secskip}{2.4ex}
+  \newcommand{\atscv@entryskip}{1.1ex}
+\fi
+\setlength{\parindent}{0pt}
+
+% ---- sections -------------------------------------------------------------
+% Uppercased with \MakeUppercase (real capital letters in the output stream,
+% unlike small caps, which some extractors render as a separate glyph run).
+\ifatscv@rule
+  \titleformat{\section}
+    {\normalsize\bfseries}{}{0em}{\MakeUppercase}[\vspace{-0.9ex}\rule{\linewidth}{0.6pt}]
+\else
+  \titleformat{\section}
+    {\normalsize\bfseries}{}{0em}{\MakeUppercase}
+\fi
+\titlespacing*{\section}{0pt}{\atscv@secskip}{0.9ex}
+
+% ---- header ---------------------------------------------------------------
+\newcommand{\cvsep}{\;\textbar\;}
+
+% \cvheader{Name}{Headline or target job title}{contact line}
+% Leave #2 empty to omit the headline.
+\newcommand{\cvheader}[3]{%
+  \begingroup
+    \centering
+    {\LARGE\bfseries #1\par}
+    \ifx\relax#2\relax\else\vspace{0.5ex}{\normalsize #2\par}\fi
+    \vspace{0.7ex}{\small #3\par}
+    \vspace{0.4ex}
+  \endgroup
+  \par
+}
+
+% \cvmeta{title}{author}{comma-separated keywords}
+% Some parsers read the PDF document-information dictionary before the page
+% content, so mirror your headline keywords here.
+\newcommand{\cvmeta}[3]{%
+  \hypersetup{pdftitle={#1},pdfauthor={#2},pdfsubject={Curriculum Vitae},pdfkeywords={#3}}%
+}
+
+% ---- entries --------------------------------------------------------------
+% Flush-left/flush-right on one line without tabular. Local \rightskip and
+% \parfillskip let \hfill absorb all the slack despite global \raggedright.
+\newcommand{\cvline}[2]{%
+  \par\begingroup
+    \rightskip=0pt\parfillskip=0pt\relax
+    #1\hfill #2\par
+  \endgroup
+}
+
+% \cventry{Role}{Organisation}{Location}{Dates}
+% Renders role + dates on line one, organisation + location on line two.
+% Extracted order is Role, Dates, Organisation, Location -- the association a
+% date-proximity parser expects. Pass an empty {} for location if unused.
+\newcommand{\cventry}[4]{%
+  \vspace{\atscv@entryskip}%
+  \cvline{\textbf{#1}}{\textbf{#4}}%
+  #2\ifx\relax#3\relax\else, #3\fi\par
+  \vspace{0.15ex}%
+}
+
+% \cvsubentry{Sub-role}{Dates} -- for a promotion within the same employer
+\newcommand{\cvsubentry}[2]{%
+  \vspace{0.5ex}\cvline{\textit{#1}}{\textit{#2}}%
+}
+
+% ---- lists ----------------------------------------------------------------
+\newlist{cvbullets}{itemize}{1}
+\setlist[cvbullets]{%
+  leftmargin=1.3em, labelsep=0.55em, label=\textbullet,
+  topsep=0.35ex, itemsep=0.25ex, parsep=0pt, partopsep=0pt}
+
+\newlist{cvnumbered}{enumerate}{1}
+\setlist[cvnumbered]{%
+  leftmargin=1.6em, labelsep=0.5em, label=\arabic*.,
+  topsep=0.35ex, itemsep=0.35ex, parsep=0pt, partopsep=0pt}
+
+% ---- skills ---------------------------------------------------------------
+% \cvskill{Category}{comma, separated, list}
+% Bold label, colon, plain comma list. No tables, no bars, no ratings --
+% all three are unparseable and tell a reader nothing anyway.
+\newcommand{\cvskill}[2]{\textbf{#1:} #2\par\vspace{0.3ex}}
+
+% ---- misc -----------------------------------------------------------------
+% Print a link whose visible text is the URL itself. Screeners frequently see
+% only the anchor text, so "LinkedIn" as anchor loses the address entirely.
+\newcommand{\cvurl}[1]{\href{https://#1}{#1}}
+\newcommand{\cvmail}[1]{\href{mailto:#1}{#1}}
+
+\endinput

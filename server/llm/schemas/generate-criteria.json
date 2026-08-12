@@ -1,0 +1,45 @@
+{
+  "$id": "generate-criteria",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["answers", "gaps", "changes_made"],
+  "properties": {
+    "answers": {
+      "type": "array",
+      "description": "One entry per question, in the order the questions were given. Never merge two questions into one answer and never invent a question that was not asked.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["criterion", "paragraphs"],
+        "properties": {
+          "criterion": { "type": "string", "description": "The question, copied exactly as given — assessors score against its literal wording" },
+          "paragraphs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["text", "evidence_ids"],
+              "properties": {
+                "text": { "type": "string" },
+                "evidence_ids": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          }
+        }
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["evidence_id", "wanted"],
+        "properties": {
+          "evidence_id": { "type": "string" },
+          "wanted": { "type": "string", "description": "e.g. 'an example of leading a team' — the fact the criterion needed and the records did not have" }
+        }
+      }
+    },
+    "changes_made": { "type": "array", "items": { "type": "string" } }
+  }
+}

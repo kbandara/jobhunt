@@ -1,0 +1,55 @@
+{
+  "id": "industry-research",
+  "description": "Research scientist and R&D roles inside a company: research programmes framed as shipped work rather than as papers.",
+  "targets": [
+    "research scientist",
+    "research engineer",
+    "R&D",
+    "industrial postdoc"
+  ],
+  "evidenceProfiles": [
+    "*"
+  ],
+  "register": "specialist",
+  "sections": [
+    {
+      "id": "summary"
+    },
+    {
+      "id": "research"
+    },
+    {
+      "id": "experience"
+    },
+    {
+      "id": "skills"
+    },
+    {
+      "id": "publications",
+      "max": 5
+    },
+    {
+      "id": "education"
+    }
+  ],
+  "lengthPages": 2,
+  "publications": {
+    "policy": "selected",
+    "count": 5,
+    "style": "one-line"
+  },
+  "clearance": "mention",
+  "techSectionName": "Technical Skills",
+  "summaryAlways": true,
+  "criteriaDoc": false,
+  "kindPriority": {
+    "project": 6,
+    "role": 5,
+    "finding": 4,
+    "skill": 4,
+    "publication": 3,
+    "education": 3,
+    "award": 1,
+    "service": 1
+  }
+}

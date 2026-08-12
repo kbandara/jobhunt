@@ -1,0 +1,25 @@
+{
+  "name": "jobhunt",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "A local job-application pipeline: reads a job ad, scores it honestly, and drafts a CV where every bullet is traceable to a record you wrote.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node server/index.js",
+    "doctor": "node server/doctor.js",
+    "test": "node --test",
+    "models": "node server/llm/models.js",
+    "smoke": "node server/llm/smoke.js",
+    "record-fixtures": "node server/llm/record-fixtures.js"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "express": "^4.21.2",
+    "htm": "^3.1.1",
+    "marked": "^15.0.6",
+    "preact": "^10.25.4"
+  }
+}

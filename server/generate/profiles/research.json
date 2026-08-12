@@ -1,0 +1,57 @@
+{
+  "id": "research",
+  "description": "Postdoctoral and research-scientist posts in universities, institutes and research centres. Full publication list, no page limit.",
+  "targets": [
+    "postdoc",
+    "research fellow",
+    "research scientist",
+    "research associate"
+  ],
+  "evidenceProfiles": [
+    "*"
+  ],
+  "register": "specialist",
+  "sections": [
+    {
+      "id": "summary"
+    },
+    {
+      "id": "research"
+    },
+    {
+      "id": "publications"
+    },
+    {
+      "id": "skills"
+    },
+    {
+      "id": "teaching"
+    },
+    {
+      "id": "education"
+    },
+    {
+      "id": "service"
+    }
+  ],
+  "lengthPages": null,
+  "publications": {
+    "policy": "all",
+    "style": "full",
+    "grouped": true
+  },
+  "clearance": "omit",
+  "techSectionName": "Methods & Techniques",
+  "summaryAlways": true,
+  "criteriaDoc": false,
+  "kindPriority": {
+    "project": 6,
+    "publication": 5,
+    "role": 4,
+    "education": 3,
+    "skill": 3,
+    "award": 2,
+    "finding": 4,
+    "service": 1
+  }
+}

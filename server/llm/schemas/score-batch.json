@@ -1,0 +1,21 @@
+{
+  "$id": "score-batch",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["scores"],
+  "properties": {
+    "scores": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["index", "score", "reason"],
+        "properties": {
+          "index": { "type": "integer", "description": "Position of the title in the submitted batch" },
+          "score": { "type": "integer", "description": "Whole number 0-20 from the title alone" },
+          "reason": { "type": "string", "description": "One line" }
+        }
+      }
+    }
+  }
+}

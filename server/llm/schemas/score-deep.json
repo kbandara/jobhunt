@@ -1,0 +1,48 @@
+{
+  "$id": "score-deep",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["score", "summary", "matched", "unmet"],
+  "properties": {
+    "score": { "type": "integer", "description": "Whole number 0-20 (NOT 0-100) for the strength of this application against this advertisement, in a normal field. The app multiplies it by five for display, and may cap it; it shows both values." },
+    "summary": { "type": "string", "description": "Two or three plain sentences: what is strong, what is weak, and what a recruiter would actually do with it" },
+    "overqualification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level"],
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": ["none", "somewhat", "clearly"],
+          "description": "Too senior for the level of the WORK — a way to be screened out that nobody tells you about. Not about credential height."
+        },
+        "note": { "type": "string", "description": "Why, in one sentence: salary mismatch, expected to leave, or the work would bore them" }
+      }
+    },
+    "matched": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["requirement"],
+        "properties": {
+          "requirement": { "type": "string" },
+          "evidence_ids": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "unmet": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["requirement", "severity"],
+        "properties": {
+          "requirement": { "type": "string" },
+          "severity": { "type": "string", "enum": ["blocking", "significant", "minor"] },
+          "note": { "type": "string" }
+        }
+      }
+    }
+  }
+}

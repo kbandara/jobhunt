@@ -1,0 +1,30 @@
+{
+  "$id": "https://job-hunt.local/schemas/polish-profile.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["suggestions"],
+  "properties": {
+    "suggestions": {
+      "type": "array",
+      "description": "One entry per record you would change. Leave out records that are already clear.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "body", "why"],
+        "properties": {
+          "id": { "type": "string", "description": "The id of an existing record. Never invent one." },
+          "body": {
+            "type": "string",
+            "description": "The rewritten body. Same facts, same numbers, same organisations — clearer sentences, the outcome first, no filler. If you cannot improve it without adding something, leave this record out entirely."
+          },
+          "why": { "type": "string", "description": "One short sentence: what you changed and why." },
+          "asks": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Questions only this person can answer, which would make the record much stronger: 'how many sites?', 'what did the error rate go down to?'. These are asked, never guessed."
+          }
+        }
+      }
+    }
+  }
+}
